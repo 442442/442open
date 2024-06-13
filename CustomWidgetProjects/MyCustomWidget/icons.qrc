@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icon/dragtreeicon.png</file>
+        <file>icon/halcondispicon.png</file>
+        <file>icon/halconhudicon.png</file>
+        <file>icon/halconminiicon.png</file>
+        <file>icon/lineedit.png</file>
+        <file>icon/spinbox.png</file>
+        <file>icon/widget.png</file>
+        <file>icon/xmltreeicon.png</file>
+    </qresource>
+</RCC>
