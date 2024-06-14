@@ -6,6 +6,8 @@ MyCustomUnit::MyCustomUnit(QObject *parent)
 {
     m_widgets.append(new QParamEditPlugin(this));
     m_widgets.append(new QTextParamEditPlugin(this));
+    m_widgets.append(new QPathEditPlugin(this));
+    m_widgets.append(new QFileEditPlugin(this));
     m_widgets.append(new QHalconDisplayPlugin(this));
     m_widgets.append(new QHalconDisplayMiniPlugin(this));
     m_widgets.append(new QHalconMiniHudPlugin(this));

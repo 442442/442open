@@ -8,7 +8,6 @@
 class QLabel;
 class QDoubleSpinBox;
 class QHBoxLayout;
-class QSpacerItem;
 class QDESIGNER_WIDGET_EXPORT QParamEdit : public QWidget
 {
     Q_OBJECT
@@ -75,7 +74,6 @@ private:
     bool eventFilter(QObject *obj, QEvent *event);
 
     QHBoxLayout* mpLayout;
-    QSpacerItem* mpSpacer;
     bool mMouseEnableFlag;
 };
 

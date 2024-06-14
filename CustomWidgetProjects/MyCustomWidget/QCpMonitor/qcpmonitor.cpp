@@ -7,7 +7,7 @@
 #define NORMAL_STYLE "QLabel{background-color:transparent;color:black;}"
 
 QCpMonitor::QCpMonitor(QWidget *parent)
-    : QWidget{parent}, mpMonitor{new Monitor} {
+    : QWidget{parent}, mpMonitor{new Monitor(parent)} {
     connect(mpMonitor, &Monitor::NoticeResource, this,
             &QCpMonitor::SlotOnResource, Qt::QueuedConnection);
     connect(mpMonitor, &Monitor::NoticeDiskFreeSpace, this,

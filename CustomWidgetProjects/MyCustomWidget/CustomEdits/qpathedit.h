@@ -2,15 +2,17 @@
 #define QPATHEDIT_H
 
 #include <QWidget>
+#include <QtUiPlugin/QDesignerExportWidget>
 
 class QLineEdit;
 class QPushButton;
 class QHBoxLayout;
-class QPathEdit : public QWidget
+class QDESIGNER_WIDGET_EXPORT QPathEdit : public QWidget
 {
     Q_OBJECT
 public:
-    explicit QPathEdit(const QString& path,QWidget *parent = nullptr);
+    explicit QPathEdit(QWidget *parent = nullptr) : QPathEdit("", parent) {}
+    explicit QPathEdit(const QString &path, QWidget *parent = nullptr);
     ~QPathEdit();
 
     QString text() const;
@@ -23,10 +25,11 @@ private:
     QPushButton* mpButton;
 };
 
-class QFileEdit : public QWidget
+class QDESIGNER_WIDGET_EXPORT QFileEdit : public QWidget
 {
     Q_OBJECT
 public:
+    explicit QFileEdit(QWidget *parent = nullptr) : QFileEdit("", parent) {}
     explicit QFileEdit(const QString& path,QWidget *parent = nullptr);
     ~QFileEdit();
 

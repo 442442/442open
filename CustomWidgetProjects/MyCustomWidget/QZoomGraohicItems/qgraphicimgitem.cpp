@@ -20,6 +20,8 @@ void QGraphicImgItem::mousePressEvent(QGraphicsSceneMouseEvent *ev)
 {
     if(mWatcher)
     {
-        mWatcher->OnPixelInfo(QColor(this->pixmap().toImage().pixel(ev->pos().toPoint())));
+        auto point = ev->pos();
+        mWatcher->OnPixelInfo(
+            point, QColor(this->pixmap().toImage().pixel(point.toPoint())));
     }
 }

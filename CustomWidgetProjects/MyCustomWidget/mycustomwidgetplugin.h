@@ -75,6 +75,24 @@ public:
     virtual QWidget* createWidget(QWidget* parent) override;
 };
 
+class QPathEditPlugin : public QObject, public MyCustomWidgetPlugin
+{
+    Q_OBJECT
+    Q_INTERFACES(QDesignerCustomWidgetInterface)
+public:
+    QPathEditPlugin(QObject* parent = Q_NULLPTR);
+    virtual QWidget* createWidget(QWidget* parent) override;
+};
+
+class QFileEditPlugin : public QObject, public MyCustomWidgetPlugin
+{
+    Q_OBJECT
+    Q_INTERFACES(QDesignerCustomWidgetInterface)
+public:
+    QFileEditPlugin(QObject* parent = Q_NULLPTR);
+    virtual QWidget *createWidget(QWidget* parent) override;
+};
+
 class QXmlTreeWidgetPlugin : public QObject, public MyCustomWidgetPlugin
 {
     Q_OBJECT

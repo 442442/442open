@@ -3,6 +3,9 @@
 #include <QLabel>
 #include <QSizePolicy>
 #include <QFont>
+#include <QMouseEvent>
+
+#include "qzoomgraphicdlg.h"
 
 QGrahpicViewMiniHud::QGrahpicViewMiniHud(QWidget *parent)
     :QWidget{parent},mpLayout{new QVBoxLayout(this)}
@@ -12,6 +15,9 @@ QGrahpicViewMiniHud::QGrahpicViewMiniHud(QWidget *parent)
     mpLayout->addWidget(mpInfoLabel);
     mpImageLabel->setSizePolicy(QSizePolicy::Policy::Expanding,QSizePolicy::Policy::Expanding);
     mpInfoLabel->setSizePolicy(QSizePolicy::Policy::Preferred,QSizePolicy::Policy::Preferred);
+    mpInfoLabel->setAlignment(Qt::AlignCenter);
+    mpLayout->setContentsMargins(0, 0, 0, 0);
+    mpLayout->setSpacing(5);
 }
 
 QGrahpicViewMiniHud::~QGrahpicViewMiniHud()
@@ -34,6 +40,11 @@ void QGrahpicViewMiniHud::SetImage(const QPixmap &pix, const QString &text)
 void QGrahpicViewMiniHud::SetImage(const QPixmap &pix)
 {
     mPixmap = pix;
+    if (mpImageLabel->width() < mpImageLabel->height()) {
+        mpImageLabel->setPixmap(mPixmap.scaledToHeight(mpImageLabel->height()));
+    } else {
+        mpImageLabel->setPixmap(mPixmap.scaledToWidth(mpImageLabel->width()));
+    }
 }
 
 void QGrahpicViewMiniHud::SetText(const QString &text)
@@ -70,3 +81,23 @@ void QGrahpicViewMiniHud::CancelHighLight()
 {
     mpInfoLabel->setPalette(Qt::transparent);
 }
+
+void QGrahpicViewMiniHud::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    if (event->button() != Qt::LeftButton)
+        return;
+
+    QZoomGraphicDlg* pZoom = new QZoomGraphicDlg(this);
+    pZoom->AddImage(mPixmap);
+    pZoom->setWindowTitle(mpInfoLabel->text());
+    for (const auto& item : mItem) {
+        pZoom->AddGraphicsItem(item);
+    }
+    pZoom->InitSceneSize(mPixmap.width(),mPixmap.height());
+    pZoom->show();
+}
+
+
+
+
+

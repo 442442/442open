@@ -118,6 +118,52 @@ QWidget* QTextParamEditPlugin::createWidget(QWidget* parent)
     return new QTextParamEdit(parent);
 }
 
+QPathEditPlugin::QPathEditPlugin(QObject *parent):QObject(parent)
+{
+    m_name = QLatin1String("QPathEdit");
+    m_include=QLatin1String("CustomEdits/qpathedit.h");
+    m_toolTip=QString(u8"路径选择控件");
+    m_domXml="<widget class=\"QPathEdit\" name=\"qPathEdit\">\n"
+               " <property name=\"geometry\">\n"
+               "  <rect>\n"
+               "   <x>0</x>\n"
+               "   <y>0</y>\n"
+               "   <width>150</width>\n"
+               "   <height>20</height>\n"
+               "  </rect>\n"
+               " </property>\n"
+               "</widget>\n";
+    m_icon = QIcon("://icon/lineedit.png");
+}
+
+QWidget *QPathEditPlugin::createWidget(QWidget *parent)
+{
+    return new QPathEdit(parent);
+}
+
+QFileEditPlugin::QFileEditPlugin(QObject *parent):QObject(parent)
+{
+    m_name = QLatin1String("QFileEdit");
+    m_include=QLatin1String("CustomEdits/qpathedit.h");
+    m_toolTip=QString(u8"路径选择控件");
+    m_domXml="<widget class=\"QFileEdit\" name=\"qFileEdit\">\n"
+               " <property name=\"geometry\">\n"
+               "  <rect>\n"
+               "   <x>0</x>\n"
+               "   <y>0</y>\n"
+               "   <width>150</width>\n"
+               "   <height>20</height>\n"
+               "  </rect>\n"
+               " </property>\n"
+               "</widget>\n";
+    m_icon = QIcon("://icon/lineedit.png");
+}
+
+QWidget *QFileEditPlugin::createWidget(QWidget *parent)
+{
+    return new QFileEdit(parent);
+}
+
 QXmlTreeWidgetPlugin::QXmlTreeWidgetPlugin(QObject* parent):QObject(parent)
 {
     m_name = QLatin1String("QXmlTreeWidget");

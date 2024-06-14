@@ -7,7 +7,6 @@
 
 class QLabel;
 class QVBoxLayout;
-class QZoomGraphicDlg;
 class QDESIGNER_WIDGET_EXPORT QGrahpicViewMiniHud : public QWidget
 {
     Q_OBJECT
@@ -36,7 +35,12 @@ signals:
     void TextChanged();
 
 private:
-    QZoomGraphicDlg* mpZoomDialog;
+    /// <summary>
+    /// 双击事件
+    /// </summary>
+    /// <param name="event"></param>
+    void mouseDoubleClickEvent(QMouseEvent* event);
+
 
     QVBoxLayout* mpLayout;//布局
     QLabel* mpInfoLabel;//显示信息label

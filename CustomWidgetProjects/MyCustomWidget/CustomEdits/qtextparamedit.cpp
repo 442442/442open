@@ -1,26 +1,8 @@
-#include "qtextparamedit.h"
+﻿#include "qtextparamedit.h"
 #include <QLayout>
 #include <QLabel>
 #include <QSpacerItem>
 #include <QLineEdit>
-
-QTextParamEdit::QTextParamEdit(QWidget *parent) :
-    QWidget(parent)
-{
-    mpLayout = new QHBoxLayout(this);
-    mpParamLabel = new QLabel("param");
-    mpLineEdit = new QLineEdit("text");
-    mpSpacer = new QSpacerItem(20, 20, QSizePolicy::Expanding);
-
-    mpParamLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    mpLineEdit->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-
-    mpLayout->addWidget(mpParamLabel);
-    mpLayout->addItem(mpSpacer);
-    mpLayout->addWidget(mpLineEdit);
-
-    mpLayout->setContentsMargins(0, 0, 20, 0);
-}
 
 QTextParamEdit::QTextParamEdit(QString paramName, QString value, QWidget* parent) :
     QWidget(parent)
@@ -28,13 +10,11 @@ QTextParamEdit::QTextParamEdit(QString paramName, QString value, QWidget* parent
     mpLayout = new QHBoxLayout(this);
     mpParamLabel = new QLabel(paramName);
     mpLineEdit = new QLineEdit(value);
-    mpSpacer = new QSpacerItem(20, 20, QSizePolicy::Expanding);
 
     mpParamLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     mpLineEdit->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
     mpLayout->addWidget(mpParamLabel);
-    mpLayout->addItem(mpSpacer);
     mpLayout->addWidget(mpLineEdit);
 
     mpLayout->setContentsMargins(0, 0, 20, 0);

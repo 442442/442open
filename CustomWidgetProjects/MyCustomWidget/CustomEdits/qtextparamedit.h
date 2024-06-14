@@ -1,4 +1,4 @@
-#ifndef QTEXTPARAMEDIT_H
+﻿#ifndef QTEXTPARAMEDIT_H
 #define QTEXTPARAMEDIT_H
 #pragma once
 #include <QWidget>
@@ -7,7 +7,6 @@
 class QLabel;
 class QLineEdit;
 class QHBoxLayout;
-class QSpacerItem;
 class QDESIGNER_WIDGET_EXPORT QTextParamEdit : public QWidget
 {
     Q_OBJECT
@@ -18,7 +17,8 @@ class QDESIGNER_WIDGET_EXPORT QTextParamEdit : public QWidget
     Q_PROPERTY(QString editStyleSheet READ getEditStyleSheet WRITE setEditStyleSheet)
 
 public:
-    explicit QTextParamEdit(QWidget *parent = 0);
+    explicit QTextParamEdit(QWidget *parent = 0)
+        :QTextParamEdit("param","text",parent){};
     explicit QTextParamEdit(QString paramName, QString value, QWidget* parent = nullptr);
     ~QTextParamEdit();
 
@@ -39,7 +39,6 @@ public:
 
 private:
     QHBoxLayout* mpLayout;
-    QSpacerItem* mpSpacer;
 };
 
 #endif // QTEXTPARAMEDIT_H

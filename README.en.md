@@ -1,36 +1,36 @@
 # 442open
 
 #### Description
-442的公开仓库
+442's open sources repository.
+CustomWidgetProjects is a project about Qt custom widgets.
+MyCustomWidget is a project of Qt Designer custom widgets plugin.
+test is a project of widget testing. 
 
-#### Software Architecture
-Software architecture description
+#### What's in Custom Widgets
+
+Computer Performance Monitor
+Drag Tree
+Xml Tree
+Path Selector
+File Selector
+Parameter Editor
+Halcon Display
+Halcon Image Display Only
+Halcon Display Minihud(double click to open in a new dialog)
+Zoomable QGraphicsView
+Zoomable Custom QGraphicsItems(arrow,rect,text,pixmap)
+
 
 #### Installation
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+1.  cmake_minimum_required 3.16 halcon qt5/qt6
 
-#### Instructions
+#### Bugs Remain
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+1.  XmlTreeWidget2 :crash on some specific situation.
+2.  Computer Performance Monitor: build with qt5.14.2 can not send QMap signal
+3.  Halcon build release:setting text font do not work
 
-#### Contribution
+4.  Halcon region info tips abnormal
 
-1.  Fork the repository
-2.  Create Feat_xxx branch
-3.  Commit your code
-4.  Create Pull Request
-
-
-#### Gitee Feature
-
-1.  You can use Readme\_XXX.md to support different languages, such as Readme\_en.md, Readme\_zh.md
-2.  Gitee blog [blog.gitee.com](https://blog.gitee.com)
-3.  Explore open source project [https://gitee.com/explore](https://gitee.com/explore)
-4.  The most valuable open source project [GVP](https://gitee.com/gvp)
-5.  The manual of Gitee [https://gitee.com/help](https://gitee.com/help)
-6.  The most popular members  [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+5.  Graphics text item would not repaint with AttachToArrow on some specific situation.

@@ -15,7 +15,6 @@ QParamEdit::QParamEdit(QString paramName, double value, QString unit, QWidget* p
     mpSpinBox = new QDoubleSpinBox();
     mpSpinBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     mpUnit = new QLabel(unit);
-    mpSpacer = new QSpacerItem(20, 20, QSizePolicy::Expanding);
 
     mpSpinBox->setRange(-1, 9999999);
     mpSpinBox->setValue(value);
@@ -23,7 +22,6 @@ QParamEdit::QParamEdit(QString paramName, double value, QString unit, QWidget* p
     mpSpinBox->installEventFilter(this);
 
     mpLayout->addWidget(mpParamLabel);
-    mpLayout->addItem(mpSpacer);
     mpLayout->addWidget(mpSpinBox);
     mpLayout->addWidget(mpUnit);
     mpLayout->setContentsMargins(0, 0, 10, 0);

@@ -15,6 +15,7 @@ message(STATUS ${NAME} " build with Qt" ${QT_VERSION_MAJOR})
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
 
 #------------------------------------------------------
 
@@ -35,8 +36,11 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RLEASE ${OUTPUT_PATH})
 #                   add source
 
 #------------------------------------------------------
-
-qt_add_resources(ALL_RESOURCES icons.qrc)
+if(${QT_VERSION_MAJOR} EQUAL 5)
+    qt5_add_resources(ALL_RESOURCES icons.qrc)
+else()
+    qt_add_resources(ALL_RESOURCES icons.qrc)
+endif()
 
 file(GLOB_RECURSE ALL_SOURCES
     *.cpp
@@ -80,4 +84,43 @@ target_link_libraries(${NAME} PRIVATE
 target_link_libraries(${NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::Designer
 )
+
+#------------------------------------------------------
+
+#                   copy headers
+
+#------------------------------------------------------
+
+file(GLOB MY_PUBLIC_HEADERS Q442CustomGraphicItem.h Q442CustomWidget.h)
+file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${OUTPUT_PATH}/../include)
+
+file(GLOB MY_PUBLIC_HEADERS CustomEdits/*.h)
+file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${OUTPUT_PATH}/../include/CustomEdits)
+
+file(GLOB MY_PUBLIC_HEADERS QCpMonitor/qcpmonitor.h)
+file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${OUTPUT_PATH}/../include/QCpMonitor)
+
+file(GLOB MY_PUBLIC_HEADERS QDragTreeWidget/qdragtreewidget.h)
+file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${OUTPUT_PATH}/../include/QDragTreeWidget)
+
+file(GLOB MY_PUBLIC_HEADERS QGraphicMiniHud/qgrahpicviewminihud.h)
+file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${OUTPUT_PATH}/../include/QGraphicMiniHud)
+
+file(GLOB MY_PUBLIC_HEADERS QHalconDisplay/*.h)
+file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${OUTPUT_PATH}/../include/QHalconDisplay)
+
+file(GLOB MY_PUBLIC_HEADERS QHalconDisplayMini/*.h)
+file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${OUTPUT_PATH}/../include/QHalconDisplayMini)
+
+file(GLOB MY_PUBLIC_HEADERS QHalconMiniHud/qhalconminihud.h)
+file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${OUTPUT_PATH}/../include/QHalconMiniHud)
+
+file(GLOB MY_PUBLIC_HEADERS QXmlTreeWidget/*.h)
+file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${OUTPUT_PATH}/../include/QXmlTreeWidget)
+
+file(GLOB MY_PUBLIC_HEADERS QZoomGraohicItems/*.h)
+file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${OUTPUT_PATH}/../include/QZoomGraohicItems)
+
+file(GLOB MY_PUBLIC_HEADERS QZoomGraphicView/*.h)
+file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${OUTPUT_PATH}/../include/QZoomGraphicView)
 

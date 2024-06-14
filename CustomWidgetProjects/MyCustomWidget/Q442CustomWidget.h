@@ -11,3 +11,4 @@
 #include "QZoomGraphicView/qzoomgraphicview.h"
 #include "QGraphicMiniHud/qgrahpicviewminihud.h"
 #include "QZoomGraphicView/qpixellistener.h"
+#include "CustomEdits/qpathedit.h"

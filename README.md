@@ -12,14 +12,15 @@ CustomWidgetProjects为自定义控件库项目
 拖拽树
 xml树（2种）
 路径选择框
+文件选择框
 参数编辑框
 halcon显示
 halcon仅显示
-halcon缩略窗
-qgraphicsview显示
-qgraphicsview缩略窗（开发中）
-qgraphics箭头图元
-qgraphics文字图元
+halcon缩略窗(双击打开放开窗口)
+qgraphicsview显示(可放大)
+qgraphicsview缩略窗
+qgraphics图元(可放大，有箭头，方框，文字，图片)
+
 
 #### 安装教程
 
@@ -35,7 +36,7 @@ qgraphics文字图元
 1.	XmlTreeWidget2按特定顺序操作崩溃的的bug
 	双击path/file类型参数，双击空白其他非可编辑item，再改变窗口大小
 
-2.	电脑性能监控，qt5版本无法发送硬盘map信号
+2.	电脑性能监控，qt5.14.2版本无法发送硬盘map信号
 
 3.	halcon窗口release下字体显示异常
 
