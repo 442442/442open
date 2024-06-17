@@ -1,5 +1,6 @@
 ﻿#ifndef QHALCONDISPLAYMINI_H
 #define QHALCONDISPLAYMINI_H
+
 #pragma once
 #include <halconcpp/HalconCpp.h>
 #include <QLabel>

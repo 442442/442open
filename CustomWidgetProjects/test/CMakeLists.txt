@@ -3,6 +3,12 @@
 set(NAME test)
 project(${NAME})
 
+get_property(USE_HALCON GLOBAL PROPERTY USE_HALCON)
+
+if(USE_HALCON)
+    add_definitions(-DBUILD_WITH_HALCON)
+endif()
+
 #------------------------------------------------------
 
 #                       set qt
@@ -39,13 +45,17 @@ add_executable(${NAME}
     windoweffect.cpp windoweffect.h
 )
 
+set_property(TARGET ${NAME} PROPERTY DEBUG_POSTFIX d)
+
 #------------------------------------------------------
 
 #               add inckude path
 
 #------------------------------------------------------
 
+if(USE_HALCON)
 include_directories(${CMAKE_SOURCE_DIR}/include/halcon)
+endif()
 include_directories(${CMAKE_SOURCE_DIR}/include/tinyxml)
 include_directories(${CMAKE_SOURCE_DIR}/MyCustomWidget)
 
@@ -58,7 +68,9 @@ include_directories(${CMAKE_SOURCE_DIR}/MyCustomWidget)
 target_link_directories(${NAME} PRIVATE ${CMAKE_SOURCE_DIR}/lib)
 target_link_directories(${NAME} PRIVATE ${OUTPUT_PATH})
 
-target_link_libraries(${NAME} PRIVATE halconcpp)
+if(USE_HALCON)
+    target_link_libraries(${NAME} PRIVATE halconcpp)
+endif()
 target_link_libraries(${NAME} PRIVATE tinyxml2)
 target_link_libraries(${NAME} PRIVATE
     debug MyCustomWidgetd
@@ -74,16 +86,4 @@ target_link_libraries(${NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::Gui
     Qt${QT_VERSION_MAJOR}::Widgets
 )
-
-#------------------------------------------------------
-
-#                   install
-
-#------------------------------------------------------
-
-# install(TARGETS ${NAME}
-#     RUNTIME DESTINATION "${CMAKE_CURRENT_LIST_DIR}"
-#     BUNDLE DESTINATION "${CMAKE_CURRENT_LIST_DIR}"
-#     LIBRARY DESTINATION "${CMAKE_CURRENT_LIST_DIR}"
-# )
 

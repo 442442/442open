@@ -48,6 +48,7 @@ private:
 
     QList<QGraphicsItem*> mItem;
     QPixmap mPixmap;
+    QString mText;
 
     QMap<QString,QVariant> mData;
 };

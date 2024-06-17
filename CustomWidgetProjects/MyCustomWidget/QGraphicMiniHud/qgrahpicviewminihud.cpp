@@ -7,6 +7,9 @@
 
 #include "qzoomgraphicdlg.h"
 
+template<typename T>
+constexpr auto HIGHLIGHT_FONT(T msg) { return QString(u8"<font color=\'red\'><b>%1</b></font>").arg(msg); }
+
 QGrahpicViewMiniHud::QGrahpicViewMiniHud(QWidget *parent)
     :QWidget{parent},mpLayout{new QVBoxLayout(this)}
     ,mpInfoLabel{new QLabel(this)},mpImageLabel{new QLabel(this)}
@@ -49,6 +52,7 @@ void QGrahpicViewMiniHud::SetImage(const QPixmap &pix)
 
 void QGrahpicViewMiniHud::SetText(const QString &text)
 {
+    mText = text;
     mpInfoLabel->setText(text);
 }
 
@@ -74,12 +78,12 @@ QVariant QGrahpicViewMiniHud::GetData(const QString &key)
 
 void QGrahpicViewMiniHud::SetHighLight()
 {
-    mpInfoLabel->setPalette(Qt::yellow);
+    mpInfoLabel->setText(HIGHLIGHT_FONT(mText));
 }
 
 void QGrahpicViewMiniHud::CancelHighLight()
 {
-    mpInfoLabel->setPalette(Qt::transparent);
+    mpInfoLabel->setText(mText);
 }
 
 void QGrahpicViewMiniHud::mouseDoubleClickEvent(QMouseEvent *event)

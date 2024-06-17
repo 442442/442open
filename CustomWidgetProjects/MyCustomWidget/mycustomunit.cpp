@@ -8,9 +8,11 @@ MyCustomUnit::MyCustomUnit(QObject *parent)
     m_widgets.append(new QTextParamEditPlugin(this));
     m_widgets.append(new QPathEditPlugin(this));
     m_widgets.append(new QFileEditPlugin(this));
+#ifdef BUILD_WITH_HALCON
     m_widgets.append(new QHalconDisplayPlugin(this));
     m_widgets.append(new QHalconDisplayMiniPlugin(this));
     m_widgets.append(new QHalconMiniHudPlugin(this));
+#endif
     m_widgets.append(new QXmlTreeWidgetPlugin(this));
     m_widgets.append(new QXmlTreeWidget2Plugin(this));
     m_widgets.append(new QDragTreeWidgetPlugin(this));

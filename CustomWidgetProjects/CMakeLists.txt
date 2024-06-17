@@ -34,6 +34,26 @@ macro(source_group_by_dir source_files)
 	endforeach(sgbd_file)
 endmacro(source_group_by_dir)
 
+#------------------------------------------------------
+
+#                   build option
+
+#------------------------------------------------------
+
+option(BUILD_TEST "Build Test" ON)
+option(BUILD_WITH_HALCON "build with Halcon" ON)
+
+set_property(GLOBAL PROPERTY USE_HALCON ${BUILD_WITH_HALCON})
+
+if(BUILD_TEST)
+    message(STATUS "build test")
+endif()
+
+if(BUILD_WITH_HALCON)
+    message(STATUS "build with halcon")
+else()
+    message(STATUS "build without halcon")
+endif()
 
 #------------------------------------------------------
 
@@ -41,6 +61,8 @@ endmacro(source_group_by_dir)
 
 #------------------------------------------------------
 
-add_subdirectory(test)
+if(BUILD_TEST)
+    add_subdirectory(test)
+endif()
 
 add_subdirectory(MyCustomWidget)

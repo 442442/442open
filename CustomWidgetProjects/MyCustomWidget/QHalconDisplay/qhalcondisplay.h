@@ -1,6 +1,8 @@
 ﻿#ifndef QHALCONDISPLAY_H
 #define QHALCONDISPLAY_H
 
+#ifdef BUILD_WITH_HALCON
+
 #pragma once
 #include <QLabel>
 #include <QObject>
@@ -105,5 +107,7 @@ public:
 
     QString mSavePath;                              //存图路径
 };
+
+#endif
 
 #endif // QHALCONDISPLAY_H

@@ -9,8 +9,10 @@
 #include <QImageReader>
 #include <QPushButton>
 #include <QTimer>
+#ifdef BUILD_WITH_HALCON
 #include <halconcpp/HalconCpp.h>
-
+#include "Q442Halconwidget.h"
+#endif
 #include "Q442CustomGraphicItem.h"
 #include "Q442CustomWidget.h"
 
@@ -156,7 +158,7 @@ MainWindow::MainWindow(QWidget *parent)
         });
         ui->qCpMonitor_2->setMemoryWarning(50);
     }
-    // halcon显示
+#ifdef BUILD_WITH_HALCON   // halcon显示
     {
         QHalconDisplay *pdisp = new QHalconDisplay;
         // playout=new QHBoxLayout(ui->tab_5);
@@ -179,21 +181,22 @@ MainWindow::MainWindow(QWidget *parent)
             }
         });
     }
+#endif
 
     // minihud
     {
         QGrahpicViewMiniHud* hud=new QGrahpicViewMiniHud;
         ui->horizontalLayout_2->addWidget(hud);
+        // hud->SetHighLight();
         connect(ui->tabWidget, &QTabWidget::currentChanged, this, [=](int index) {
             if (index == 4) {
                 hud->SetText("123");
                 QImage img;
                 img.load("D:\\Git\\442open\\CustomWidgetProjects\\test\\1.jpg");
                 hud->SetImage(QPixmap::fromImage(img));
+                hud->SetHighLight();
             }
         });
-
-
     }
 
 }

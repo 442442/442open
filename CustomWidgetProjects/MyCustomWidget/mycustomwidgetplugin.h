@@ -30,6 +30,7 @@ protected:
     QIcon m_icon;
 };
 
+#ifdef BUILD_WITH_HALCON
 class QHalconDisplayPlugin : public QObject, public MyCustomWidgetPlugin
 {
     Q_OBJECT
@@ -56,6 +57,7 @@ public:
     QHalconMiniHudPlugin(QObject* parent = Q_NULLPTR);
     virtual QWidget* createWidget(QWidget* parent) override;
 };
+#endif
 
 class QParamEditPlugin : public QObject, public MyCustomWidgetPlugin
 {

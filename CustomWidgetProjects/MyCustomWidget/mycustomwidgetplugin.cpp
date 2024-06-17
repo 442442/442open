@@ -3,6 +3,9 @@
 #include <QtPlugin>
 #include "Q442CustomWidget.h"
 
+#ifdef BUILD_WITH_HALCON
+#include "Q442Halconwidget.h"
+
 QHalconDisplayPlugin::QHalconDisplayPlugin(QObject* parent):QObject(parent)
 {
     m_name = QLatin1String("QHalconDisplay");
@@ -71,6 +74,8 @@ QWidget* QHalconMiniHudPlugin::createWidget(QWidget* parent)
 {
     return new QHalconMiniHud(parent);
 }
+
+#endif
 
 QParamEditPlugin::QParamEditPlugin(QObject* parent):QObject(parent)
 {

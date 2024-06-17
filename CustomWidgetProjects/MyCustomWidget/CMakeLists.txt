@@ -3,6 +3,12 @@
 set(NAME MyCustomWidget)
 project(${NAME})
 
+get_property(USE_HALCON GLOBAL PROPERTY USE_HALCON)
+
+if(USE_HALCON)
+    add_definitions(-DBUILD_WITH_HALCON)
+endif()
+
 #------------------------------------------------------
 
 #                       set qt
@@ -24,12 +30,9 @@ set(CMAKE_AUTORCC ON)
 #------------------------------------------------------
 
 get_property(OUTPUT_PATH GLOBAL PROPERTY OUTPUT_PATH)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${OUTPUT_PATH})
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RLEASE ${OUTPUT_PATH})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${OUTPUT_PATH})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${OUTPUT_PATH})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG ${OUTPUT_PATH})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RLEASE ${OUTPUT_PATH})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_PATH})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_PATH})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_PATH})
 
 #------------------------------------------------------
 
@@ -47,6 +50,15 @@ file(GLOB_RECURSE ALL_SOURCES
     *.h
     *.ui
 )
+
+if(NOT USE_HALCON)
+    file(GLOB_RECURSE HALCON_SOURCES
+        QHalconDisplay/*
+        QHalconDisplayMini/*
+        QHalconMiniHud/*
+    )
+    list(REMOVE_ITEM ALL_SOURCES ${HALCON_SOURCES})
+endif()
 
 add_library(${NAME} SHARED ${ALL_SOURCES} ${ALL_RESOURCES})
 
@@ -106,6 +118,8 @@ file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${OUTPUT_PATH}/../include/QDragTreeWi
 file(GLOB MY_PUBLIC_HEADERS QGraphicMiniHud/qgrahpicviewminihud.h)
 file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${OUTPUT_PATH}/../include/QGraphicMiniHud)
 
+if(USE_HALCON)
+
 file(GLOB MY_PUBLIC_HEADERS QHalconDisplay/*.h)
 file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${OUTPUT_PATH}/../include/QHalconDisplay)
 
@@ -114,6 +128,11 @@ file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${OUTPUT_PATH}/../include/QHalconDisp
 
 file(GLOB MY_PUBLIC_HEADERS QHalconMiniHud/qhalconminihud.h)
 file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${OUTPUT_PATH}/../include/QHalconMiniHud)
+
+file(GLOB MY_PUBLIC_HEADERS Q442Halconwidget.h)
+file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${OUTPUT_PATH}/../include)
+
+endif()
 
 file(GLOB MY_PUBLIC_HEADERS QXmlTreeWidget/*.h)
 file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${OUTPUT_PATH}/../include/QXmlTreeWidget)
