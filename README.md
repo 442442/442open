@@ -26,6 +26,7 @@ qgraphics图元(可放大，有箭头，方框，文字，图片)
 
 1.  需要cmake3.16以上，halcon，qt5/qt6
 2.  BUILD_TEST是否构建test项目，BUILD_WITH_HALCON是否构建含halcon控件
+3.  lib和dll在构建目录下bin中，头文件在构建目录下include中
 
 
 ##### 控件库使用说明
