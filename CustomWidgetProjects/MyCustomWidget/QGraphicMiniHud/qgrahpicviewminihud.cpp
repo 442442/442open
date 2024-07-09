@@ -10,17 +10,17 @@
 template<typename T>
 constexpr auto HIGHLIGHT_FONT(T msg) { return QString(u8"<font color=\'red\'><b>%1</b></font>").arg(msg); }
 
-QGrahpicViewMiniHud::QGrahpicViewMiniHud(QWidget *parent)
-    :QWidget{parent},mpLayout{new QVBoxLayout(this)}
-    ,mpInfoLabel{new QLabel(this)},mpImageLabel{new QLabel(this)}
+QGrahpicViewMiniHud::QGrahpicViewMiniHud(QWidget* parent)
+	:QWidget{ parent }, mpLayout{ new QVBoxLayout(this) }
+	, mpInfoLabel{ new QLabel(this) }, mpImageLabel{ new QLabel(this) }
 {
-    mpLayout->addWidget(mpImageLabel);
-    mpLayout->addWidget(mpInfoLabel);
-    mpImageLabel->setSizePolicy(QSizePolicy::Policy::Expanding,QSizePolicy::Policy::Expanding);
-    mpInfoLabel->setSizePolicy(QSizePolicy::Policy::Preferred,QSizePolicy::Policy::Preferred);
-    mpInfoLabel->setAlignment(Qt::AlignCenter);
-    mpLayout->setContentsMargins(0, 0, 0, 0);
-    mpLayout->setSpacing(5);
+	mpLayout->addWidget(mpImageLabel);
+	mpLayout->addWidget(mpInfoLabel);
+	mpImageLabel->setSizePolicy(QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Expanding);
+	mpInfoLabel->setSizePolicy(QSizePolicy::Policy::Preferred, QSizePolicy::Policy::Preferred);
+	mpInfoLabel->setAlignment(Qt::AlignCenter);
+	mpLayout->setContentsMargins(0, 0, 0, 0);
+	mpLayout->setSpacing(5);
 }
 
 QGrahpicViewMiniHud::~QGrahpicViewMiniHud()
@@ -28,77 +28,92 @@ QGrahpicViewMiniHud::~QGrahpicViewMiniHud()
 
 }
 
-void QGrahpicViewMiniHud::SetImage(const QPixmap &pix, const QString &text, const QList<QGraphicsItem *> &item)
+void QGrahpicViewMiniHud::SetImage(const QPixmap& pix, const QString& text, QList<QGraphicsItem*> item)
 {
-    SetImage(pix, text);
-    SetGraphicsItemList(item);
+	SetImage(pix, text);
+	SetGraphicsItemList(item);
 }
 
-void QGrahpicViewMiniHud::SetImage(const QPixmap &pix, const QString &text)
+void QGrahpicViewMiniHud::SetImage(const QPixmap& pix, const QString& text)
 {
-    SetImage(pix);
-    this->SetText(text);
+	SetImage(pix);
+	this->SetText(text);
 }
 
-void QGrahpicViewMiniHud::SetImage(const QPixmap &pix)
+void QGrahpicViewMiniHud::SetImage(const QPixmap& pix)
 {
-    mPixmap = pix;
-    if (mpImageLabel->width() < mpImageLabel->height()) {
-        mpImageLabel->setPixmap(mPixmap.scaledToHeight(mpImageLabel->height()));
-    } else {
-        mpImageLabel->setPixmap(mPixmap.scaledToWidth(mpImageLabel->width()));
-    }
+	mPixmap = pix;
+	if (mpImageLabel->width() < mpImageLabel->height()) {
+		mpImageLabel->setPixmap(mPixmap.scaledToHeight(mpImageLabel->height()));
+	}
+	else {
+		mpImageLabel->setPixmap(mPixmap.scaledToWidth(mpImageLabel->width()));
+	}
 }
 
-void QGrahpicViewMiniHud::SetText(const QString &text)
+void QGrahpicViewMiniHud::SetText(const QString& text)
 {
-    mText = text;
-    mpInfoLabel->setText(text);
+	mText = text;
+	mpInfoLabel->setText(text);
 }
 
 QString QGrahpicViewMiniHud::GetText() const
 {
-    return mpInfoLabel->text();
+	return mpInfoLabel->text();
 }
 
-void QGrahpicViewMiniHud::SetGraphicsItemList(const QList<QGraphicsItem *> &item)
+void QGrahpicViewMiniHud::SetGraphicsItemList(const QList<QGraphicsItem*>& item)
 {
-    mItem = item;
+	mItem = item;
 }
 
-void QGrahpicViewMiniHud::SetData(const QString &key, const QVariant &data)
+void QGrahpicViewMiniHud::ClearGraphicsItems()
 {
-    mData[key] = data;
+	qDeleteAll(mItem);
+	mItem.clear();
+	delete mpZoomDlg;
+	mpZoomDlg = nullptr;
 }
 
-QVariant QGrahpicViewMiniHud::GetData(const QString &key)
+void QGrahpicViewMiniHud::SetData(const QString& key, const QVariant& data)
 {
-    return mData.value(key);
+	mData[key] = data;
+}
+
+QVariant QGrahpicViewMiniHud::GetData(const QString& key)
+{
+	return mData.value(key);
 }
 
 void QGrahpicViewMiniHud::SetHighLight()
 {
-    mpInfoLabel->setText(HIGHLIGHT_FONT(mText));
+	mpInfoLabel->setText(HIGHLIGHT_FONT(mText));
 }
 
 void QGrahpicViewMiniHud::CancelHighLight()
 {
-    mpInfoLabel->setText(mText);
+	mpInfoLabel->setText(mText);
 }
 
-void QGrahpicViewMiniHud::mouseDoubleClickEvent(QMouseEvent *event)
+void QGrahpicViewMiniHud::mouseDoubleClickEvent(QMouseEvent* event)
 {
-    if (event->button() != Qt::LeftButton)
-        return;
+	if (event->button() != Qt::LeftButton)
+		return;
 
-    QZoomGraphicDlg* pZoom = new QZoomGraphicDlg(this);
-    pZoom->AddImage(mPixmap);
-    pZoom->setWindowTitle(mpInfoLabel->text());
-    for (const auto& item : mItem) {
-        pZoom->AddGraphicsItem(item);
-    }
-    pZoom->InitSceneSize(mPixmap.width(),mPixmap.height());
-    pZoom->show();
+	if (mpZoomDlg==nullptr)
+	{
+		mpZoomDlg = new QZoomGraphicDlg();
+		mpZoomDlg->AddImage(mPixmap);
+		mpZoomDlg->setWindowTitle(mText);
+		mpZoomDlg->InitSceneSize(mPixmap.width(), mPixmap.height());
+
+		for (const auto& item : mItem) {
+			mpZoomDlg->AddGraphicsItem(item);
+		}
+		mpZoomDlg->Update();
+	}
+	
+	mpZoomDlg->show();
 }
 
 

@@ -6,7 +6,7 @@
 namespace Ui {
 class QZoomGraphicDlg;
 }
-
+class MyListener;
 class QGraphicsItem;
 class QZoomGraphicDlg : public QDialog
 {
@@ -28,6 +28,7 @@ private:
     void showEvent(QShowEvent *) override;
 
     Ui::QZoomGraphicDlg *ui;
+    MyListener* mpListener{ nullptr };
 };
 
 #endif // QZOOMGRAPHICDLG_H

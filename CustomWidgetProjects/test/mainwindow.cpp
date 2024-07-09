@@ -74,7 +74,7 @@ MainWindow::MainWindow(QWidget *parent)
     }
     // 放大graphicsview demo
     {
-        QImageReader::setAllocationLimit(500);
+        //QImageReader::setAllocationLimit(500);
         QImage img;
         img.load("D:/Git/test1031/merge/NG/1.jpg", "JPG");
 
@@ -126,11 +126,11 @@ MainWindow::MainWindow(QWidget *parent)
         auto ptext = new QGraphicNoticeText();
         QFont font("黑体", 9, 1);
         QBrush brush(Qt::red);
-        ptext->setPlainText("123");
+        ptext->setText("123");
         // ptext->setPos(10,10);
         // ptext->setFont(font);
         // ptext->setBrush(brush);
-        ptext->AttachToArrow(arrow);
+        //ptext->AttachToArrow(arrow);
         ui->qZoomGraphicView->scene()->addItem(ptext);
 
         connect(ui->pushButton, &QPushButton::clicked, this, [=] {
@@ -185,16 +185,28 @@ MainWindow::MainWindow(QWidget *parent)
 
     // minihud
     {
-        QGrahpicViewMiniHud* hud=new QGrahpicViewMiniHud;
-        ui->horizontalLayout_2->addWidget(hud);
+        QGrahpicViewMiniHud* hud1=new QGrahpicViewMiniHud;
+        QGrahpicViewMiniHud* hud2=new QGrahpicViewMiniHud;
+        QGrahpicViewMiniHud* hud3=new QGrahpicViewMiniHud;
+        ui->horizontalLayout_2->addWidget(hud1);
+        ui->horizontalLayout_2->addWidget(hud2);
+        ui->horizontalLayout_2->addWidget(hud3);
         // hud->SetHighLight();
         connect(ui->tabWidget, &QTabWidget::currentChanged, this, [=](int index) {
             if (index == 4) {
-                hud->SetText("123");
+                auto ptext = new QGraphicNoticeText("132");
+                QFont font("黑体", 9, 1);
+                QBrush brush(Qt::red);
+                ptext->setPos(QPoint(100,100));
+
                 QImage img;
                 img.load("D:\\Git\\442open\\CustomWidgetProjects\\test\\1.jpg");
-                hud->SetImage(QPixmap::fromImage(img));
-                hud->SetHighLight();
+                hud1->SetImage(QPixmap::fromImage(img),"123",QList<QGraphicsItem*>()<<ptext);
+                hud1->SetHighLight();                
+
+                hud2->SetText("123");
+                hud2->SetImage(QPixmap::fromImage(img));
+
             }
         });
     }

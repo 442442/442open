@@ -9,7 +9,7 @@ class QGraphicArrorItem;
 /// <summary>
 /// 文字图元，固定大小，可跟随箭头图元
 /// </summary>
-class QDESIGNER_WIDGET_EXPORT QGraphicNoticeText : public QGraphicsTextItem
+class QDESIGNER_WIDGET_EXPORT QGraphicNoticeText : public QGraphicsSimpleTextItem
 {
 public:
     QGraphicNoticeText(QGraphicsItem *parent = nullptr);

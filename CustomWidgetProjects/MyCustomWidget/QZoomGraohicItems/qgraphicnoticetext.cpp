@@ -4,79 +4,81 @@
 #include <QWidget>
 #include <QDebug>
 
-QGraphicNoticeText::QGraphicNoticeText(QGraphicsItem *parent)
-    :QGraphicsTextItem(parent)
+QGraphicNoticeText::QGraphicNoticeText(QGraphicsItem* parent)
+	:QGraphicsSimpleTextItem(parent)
 {
 }
 
-QGraphicNoticeText::QGraphicNoticeText(const QString &text, QGraphicsItem *parent)
-    :QGraphicsTextItem(text,parent)
+QGraphicNoticeText::QGraphicNoticeText(const QString& text, QGraphicsItem* parent)
+	:QGraphicsSimpleTextItem(text, parent)
 {
 
 }
 
-void QGraphicNoticeText::AttachToArrow(QGraphicArrorItem *pArrow)
+void QGraphicNoticeText::AttachToArrow(QGraphicArrorItem* pArrow)
 {
-    mpArrow = pArrow;
+	mpArrow = pArrow;
 }
 
-void QGraphicNoticeText::SetNoticeTextFont(const QFont &font)
+void QGraphicNoticeText::SetNoticeTextFont(const QFont& font)
 {
-    mFont = font;
-    this->setFont(font);
+	mFont = font;
+	this->setFont(font);
 }
 
 QFont QGraphicNoticeText::GetNoticeTextFont() const
 {
-    return mFont;
+	return mFont;
 }
 
-void QGraphicNoticeText::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void QGraphicNoticeText::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
-    if(mpArrow)
-    {
-        this->setDefaultTextColor(mpArrow->Color());
-        QFont font(this->GetNoticeTextFont());
+	if (mpArrow)
+	{
+		painter->setPen(mpArrow->Color());
+		painter->setBrush(mpArrow->Color());
 
-        double scaleFactor = painter->transform().m11();
+		QFont font(this->GetNoticeTextFont());
 
-        int fontSize = mpArrow->lineWidth() * 5 / scaleFactor;
-        font.setPointSize(fontSize);
-        this->setFont(font);
-        qreal h = this->boundingRect().height() / 2;
-        qreal w = this->boundingRect().width() / 2;
-        QPointF newPos = mpArrow->GetLineItem() - QPointF(w, h);
+		double scaleFactor = painter->transform().m11();
 
-        if(newPos.y() * scaleFactor < fontSize / 2)
-        {
-            newPos += QPointF(0, fontSize);
-        }
-        else if(newPos.y() * scaleFactor >= fontSize / 2
-                && newPos.y() * scaleFactor < widget->height() / 2)
-        {
-            newPos -= QPointF(0, fontSize);
-        }
-        else if(newPos.y() * scaleFactor >= widget->height() / 2
-                && newPos.y() * scaleFactor < widget->height() - fontSize / 2)
-        {
-            newPos += QPointF(0, fontSize);
-        }
-        else
-        {
-            newPos -= QPointF(0, fontSize);
-        }
-        this->setPos(newPos);
-    }
-    else
-    {
-        double scaleFactor = painter->transform().m11();
+		int fontSize = mpArrow->lineWidth() * 5 / scaleFactor;
+		font.setPointSize(fontSize);
+		this->setFont(font);
+		qreal h = this->boundingRect().height() / 2;
+		qreal w = this->boundingRect().width() / 2;
+		QPointF newPos = mpArrow->GetLineItem() - QPointF(w, h);
 
-        if (scaleFactor == 0)
-            scaleFactor = 1;
-        QFont font(mFont);
-        int fontSize = mFont.pointSize() / scaleFactor;
-        font.setPointSize(fontSize);
-        this->setFont(font);
-    }
-    QGraphicsTextItem::paint(painter, option, widget);
+		if (newPos.y() * scaleFactor < fontSize / 2)
+		{
+			newPos += QPointF(0, fontSize);
+		}
+		else if (newPos.y() * scaleFactor >= fontSize / 2
+			&& newPos.y() * scaleFactor < widget->height() / 2)
+		{
+			newPos -= QPointF(0, fontSize);
+		}
+		else if (newPos.y() * scaleFactor >= widget->height() / 2
+			&& newPos.y() * scaleFactor < widget->height() - fontSize / 2)
+		{
+			newPos += QPointF(0, fontSize);
+		}
+		else
+		{
+			newPos -= QPointF(0, fontSize);
+		}
+		this->setPos(newPos);
+	}
+	else
+	{
+		double scaleFactor = painter->transform().m11();
+
+		if (scaleFactor == 0)
+			scaleFactor = 1;
+		QFont font(this->GetNoticeTextFont());
+		int fontSize = mFont.pointSize() / scaleFactor;
+		font.setPointSize(fontSize);
+		this->setFont(font);
+	}
+	QGraphicsSimpleTextItem::paint(painter, option, widget);
 }

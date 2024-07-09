@@ -5,9 +5,9 @@ project(${NAME})
 
 get_property(USE_HALCON GLOBAL PROPERTY USE_HALCON)
 
-if(USE_HALCON)
-    add_definitions(-DBUILD_WITH_HALCON)
-endif()
+# if(USE_HALCON)
+#     add_definitions(-DBUILD_WITH_HALCON)
+# endif()
 
 #------------------------------------------------------
 
