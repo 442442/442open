@@ -4,7 +4,7 @@
 #include <QSizePolicy>
 #include <QFont>
 #include <QMouseEvent>
-
+#include <QDebug>
 #include "qzoomgraphicdlg.h"
 
 template<typename T>
@@ -16,7 +16,9 @@ QGrahpicViewMiniHud::QGrahpicViewMiniHud(QWidget* parent)
 {
 	mpLayout->addWidget(mpImageLabel);
 	mpLayout->addWidget(mpInfoLabel);
+    mpImageLabel->setAlignment(Qt::AlignCenter);
 	mpImageLabel->setSizePolicy(QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Expanding);
+    mpImageLabel->setMinimumSize(100,100);
 	mpInfoLabel->setSizePolicy(QSizePolicy::Policy::Preferred, QSizePolicy::Policy::Preferred);
 	mpInfoLabel->setAlignment(Qt::AlignCenter);
 	mpLayout->setContentsMargins(0, 0, 0, 0);
@@ -43,11 +45,11 @@ void QGrahpicViewMiniHud::SetImage(const QPixmap& pix, const QString& text)
 void QGrahpicViewMiniHud::SetImage(const QPixmap& pix)
 {
 	mPixmap = pix;
-	if (mpImageLabel->width() < mpImageLabel->height()) {
-		mpImageLabel->setPixmap(mPixmap.scaledToHeight(mpImageLabel->height()));
+    if (mpImageLabel->width() < mpImageLabel->height()) {
+        mpImageLabel->setPixmap(mPixmap.scaledToHeight(mpImageLabel->width() / 4 * 4));
 	}
-	else {
-		mpImageLabel->setPixmap(mPixmap.scaledToWidth(mpImageLabel->width()));
+    else {
+        mpImageLabel->setPixmap(mPixmap.scaledToWidth(mpImageLabel->height() / 4 * 4));
 	}
 }
 
@@ -100,19 +102,18 @@ void QGrahpicViewMiniHud::mouseDoubleClickEvent(QMouseEvent* event)
 	if (event->button() != Qt::LeftButton)
 		return;
 
-	if (mpZoomDlg==nullptr)
+    if (mpZoomDlg == nullptr)
 	{
 		mpZoomDlg = new QZoomGraphicDlg();
-		mpZoomDlg->AddImage(mPixmap);
-		mpZoomDlg->setWindowTitle(mText);
 		mpZoomDlg->InitSceneSize(mPixmap.width(), mPixmap.height());
-
-		for (const auto& item : mItem) {
-			mpZoomDlg->AddGraphicsItem(item);
-		}
-		mpZoomDlg->Update();
 	}
-	
+    for (const auto& item : qAsConst(mItem)) {
+        mpZoomDlg->AddGraphicsItem(item);
+    }
+    mpZoomDlg->Update();
+    mpZoomDlg->AddImage(mPixmap);
+    mpZoomDlg->setWindowTitle(mText);
+
 	mpZoomDlg->show();
 }
 

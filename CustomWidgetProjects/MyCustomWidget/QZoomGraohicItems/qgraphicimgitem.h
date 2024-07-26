@@ -13,6 +13,7 @@ class QDESIGNER_WIDGET_EXPORT QGraphicImgItem : public QGraphicsPixmapItem
 {
     Q_INTERFACES(QGraphicsPixmapItem)
 public:
+    QGraphicImgItem(QGraphicsItem *parent = nullptr);
     QGraphicImgItem(const QPixmap &pixmap, QGraphicsItem *parent = nullptr);
     /// <summary>
     /// 添加像素值监听

@@ -8,6 +8,7 @@ class QZoomGraphicDlg;
 }
 class MyListener;
 class QGraphicsItem;
+class QGraphicImgItem;
 class QZoomGraphicDlg : public QDialog
 {
     Q_OBJECT
@@ -29,6 +30,7 @@ private:
 
     Ui::QZoomGraphicDlg *ui;
     MyListener* mpListener{ nullptr };
+    QGraphicImgItem* mpImgItem{ nullptr };
 };
 
 #endif // QZOOMGRAPHICDLG_H

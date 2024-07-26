@@ -4,10 +4,13 @@
 #include <QColor>
 #include <QGraphicsSceneEvent>
 
+QGraphicImgItem::QGraphicImgItem(QGraphicsItem *parent)
+    : QGraphicsPixmapItem(parent), mWatcher(nullptr) {
+    setFlags(QGraphicsItem::ItemIsFocusable);
+}
+
 QGraphicImgItem::QGraphicImgItem(const QPixmap &pixmap, QGraphicsItem *parent)
-    :QGraphicsPixmapItem(pixmap, parent)
-    ,mWatcher(nullptr)
-{
+    : QGraphicsPixmapItem(pixmap, parent), mWatcher(nullptr) {
     setFlags(QGraphicsItem::ItemIsFocusable);
 }
 

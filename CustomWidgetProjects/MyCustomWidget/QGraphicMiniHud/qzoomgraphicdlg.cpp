@@ -10,6 +10,12 @@ QZoomGraphicDlg::QZoomGraphicDlg(QWidget* parent)
 	ui->setupUi(this);
 	//this->setAttribute(Qt::WA_DeleteOnClose);
 	this->setWindowFlags(Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+
+    mpImgItem = new QGraphicImgItem();
+    mpListener = new MyListener;
+    mpImgItem->AddPixelListener(mpListener);
+    connect(mpListener, &MyListener::NoticeColorStr, ui->label, &QLabel::setText);
+    ui->qZoomGraphicView->scene()->addItem(mpImgItem);
 }
 
 QZoomGraphicDlg::~QZoomGraphicDlg()
@@ -25,11 +31,7 @@ void QZoomGraphicDlg::InitSceneSize(int width, int height)
 
 void QZoomGraphicDlg::AddImage(const QPixmap& pixmap)
 {
-	QGraphicImgItem* img = new QGraphicImgItem(pixmap);
-	mpListener = new MyListener;
-	img->AddPixelListener(mpListener);
-	connect(mpListener, &MyListener::NoticeColorStr, ui->label, &QLabel::setText);
-	ui->qZoomGraphicView->scene()->addItem(img);
+    mpImgItem->setPixmap(pixmap);
 }
 
 void QZoomGraphicDlg::AddGraphicsItem(QGraphicsItem* item)
