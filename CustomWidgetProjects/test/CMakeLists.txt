@@ -1,9 +1,10 @@
 ﻿cmake_minimum_required(VERSION 3.16)
 
-set(NAME test)
+set(NAME test_demo)
 project(${NAME})
 
 get_property(USE_HALCON GLOBAL PROPERTY USE_HALCON)
+get_property(USE_VTK GLOBAL PROPERTY USE_VTK)
 
 if(USE_HALCON)
     add_definitions(-DBUILD_WITH_HALCON)
@@ -87,3 +88,46 @@ target_link_libraries(${NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets
 )
 
+#------------------------------------------------------
+
+#                       vtk
+
+#------------------------------------------------------
+
+if(USE_VTK)
+    find_package(VTK
+      #9.0 # Compatibility support is not provided if 9.0 is requested.
+      REQUIRED
+      COMPONENTS
+        # Old component names are OK, but deprecated.
+        #vtkCommonCore
+        #vtkRenderingOpenGL2
+        # New names reflect the target names in use.
+        CommonCore
+        RenderingOpenGL2
+        CommonCore
+        RenderingOpenGL2
+        CommonDataModel
+        CommonExecutionModel
+        FiltersSources
+        InteractionStyle
+        InteractionWidgets
+        RenderingAnnotation
+        RenderingCore
+        RenderingFreeType
+        GUISupportQt
+    )
+    target_link_libraries(${NAME} PRIVATE
+        VTK::CommonCore
+        VTK::RenderingOpenGL2
+        VTK::CommonDataModel
+        VTK::CommonExecutionModel
+        VTK::FiltersSources
+        VTK::InteractionStyle
+        VTK::InteractionWidgets
+        VTK::RenderingAnnotation
+        VTK::RenderingCore
+        VTK::RenderingFreeType
+        VTK::GUISupportQt
+    )
+endif()

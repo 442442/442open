@@ -9,6 +9,8 @@
 #endif
 tinyxml2::XMLDocument xmlDocWrite;
 
+const QString XML_COMMENT=u8"name属性:ui显示的文本\nid:参数唯一标识\nvalue:参数值\nenable:参数是否显示\ntype:参数类型: 0:文本 1:数值 其他:不可编辑\nmax:数值类型最大值\nmin:最小值";
+
 QXmlTreeWidget::QXmlTreeWidget(QWidget *parent)
     : QTreeWidget(parent)
 {
@@ -103,7 +105,7 @@ bool QXmlTreeWidget::SaveXmlConfig(const QString& path)
     xmlDocWrite.InsertEndChild(xmlDeclare);
 
     tinyxml2::XMLComment* xmlComment
-            = xmlDocWrite.NewComment(u8"name属性:ui显示的文本\nid:参数唯一标识\nvalue:参数值\nenable:参数是否显示\ntype:参数类型: 0:文本 1:数值 其他:不可编辑\nmax:数值类型最大值\nmin:最小值");
+            = xmlDocWrite.NewComment(XML_COMMENT.toStdString().c_str());
     xmlDocWrite.InsertEndChild(xmlComment);
 
     tinyxml2::XMLElement* root = xmlDocWrite.NewElement("Root");

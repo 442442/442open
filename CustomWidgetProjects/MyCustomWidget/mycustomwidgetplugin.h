@@ -131,14 +131,14 @@ public:
     virtual QWidget* createWidget(QWidget* parent) override;
 };
 
-// class QGraphicViewMiniHudPlugin : public QObject, public MyCustomWidgetPlugin
-// {
-//     Q_OBJECT
-//     Q_INTERFACES(QDesignerCustomWidgetInterface)
-// public:
-//     QGraphicViewMiniHudPlugin(QObject* parent = Q_NULLPTR);
-//     virtual QWidget* createWidget(QWidget* parent) override;
-// };
+class QGraphicViewMiniHudPlugin : public QObject, public MyCustomWidgetPlugin
+{
+    Q_OBJECT
+    Q_INTERFACES(QDesignerCustomWidgetInterface)
+public:
+    QGraphicViewMiniHudPlugin(QObject* parent = Q_NULLPTR);
+    virtual QWidget* createWidget(QWidget* parent) override;
+};
 
 class QCpMonitorPlugin : public QObject, public MyCustomWidgetPlugin
 {
@@ -148,4 +148,3 @@ public:
     QCpMonitorPlugin(QObject *parent = nullptr);
     virtual QWidget *createWidget(QWidget *parent) override;
 };
-

@@ -261,28 +261,28 @@ QWidget *QZoomGraphicViewPlugin::createWidget(QWidget *parent)
     return new QZoomGraphicView(parent);
 }
 
-// QGraphicViewMiniHudPlugin::QGraphicViewMiniHudPlugin(QObject *parent):QObject(parent)
-// {
-//     m_name = QLatin1String("QGrahpicViewMiniHud");
-//     m_include = QLatin1String("QGraphicMiniHud/qgrahpicviewminihud.h");
-//     m_toolTip = QString(u8"QGraphic缩略图显示(双击放大)");
-//     m_domXml = "<widget class=\"QGrahpicViewMiniHud\" name=\"qGrahpicViewMiniHud\">\n"
-//                " <property name=\"geometry\">\n"
-//                "  <rect>\n"
-//                "   <x>0</x>\n"
-//                "   <y>0</y>\n"
-//                "   <width>300</width>\n"
-//                "   <height>200</height>\n"
-//                "  </rect>\n"
-//                " </property>\n"
-//                "</widget>\n";
-//     m_icon = QIcon("://icon/widget.png");
-// }
+QGraphicViewMiniHudPlugin::QGraphicViewMiniHudPlugin(QObject *parent):QObject(parent)
+{
+    m_name = QLatin1String("QGrahpicViewMiniHud");
+    m_include = QLatin1String("QGraphicMiniHud/qgrahpicviewminihud.h");
+    m_toolTip = QString(u8"QGraphic缩略图显示(双击放大)");
+    m_domXml = "<widget class=\"QGrahpicViewMiniHud\" name=\"qGrahpicViewMiniHud\">\n"
+               " <property name=\"geometry\">\n"
+               "  <rect>\n"
+               "   <x>0</x>\n"
+               "   <y>0</y>\n"
+               "   <width>300</width>\n"
+               "   <height>200</height>\n"
+               "  </rect>\n"
+               " </property>\n"
+               "</widget>\n";
+    m_icon = QIcon("://icon/widget.png");
+}
 
-// QWidget *QGraphicViewMiniHudPlugin::createWidget(QWidget *parent)
-// {
-//     return new QGrahpicViewMiniHud(parent);
-// }
+QWidget *QGraphicViewMiniHudPlugin::createWidget(QWidget *parent)
+{
+    return new QGrahpicViewMiniHud(parent);
+}
 
 QCpMonitorPlugin::QCpMonitorPlugin(QObject *parent) : QObject(parent)
 {

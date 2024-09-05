@@ -4,10 +4,11 @@ set(NAME MyCustomWidget)
 project(${NAME})
 
 get_property(USE_HALCON GLOBAL PROPERTY USE_HALCON)
+get_property(USE_VTK GLOBAL PROPERTY USE_VTK)
 
-# if(USE_HALCON)
-#     add_definitions(-DBUILD_WITH_HALCON)
-# endif()
+if(USE_HALCON)
+    add_definitions(-DBUILD_WITH_HALCON)
+endif()
 
 #------------------------------------------------------
 
@@ -15,7 +16,7 @@ get_property(USE_HALCON GLOBAL PROPERTY USE_HALCON)
 
 #------------------------------------------------------
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED Designer)
+find_package(QT NAMES Qt6 REQUIRED Designer)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Designer)
 message(STATUS ${NAME} " build with Qt" ${QT_VERSION_MAJOR})
 
@@ -60,6 +61,13 @@ if(NOT USE_HALCON)
     list(REMOVE_ITEM ALL_SOURCES ${HALCON_SOURCES})
 endif()
 
+if(NOT USE_VTK)
+    file(GLOB_RECURSE VTK_SOURCES
+        QVtkPointCloudWidget/*
+    )
+    list(REMOVE_ITEM ALL_SOURCES ${VTK_SOURCES})
+endif()
+
 add_library(${NAME} SHARED ${ALL_SOURCES} ${ALL_RESOURCES})
 
 source_group_by_dir(ALL_SOURCES)
@@ -74,7 +82,9 @@ set_property(TARGET ${NAME} PROPERTY DEBUG_POSTFIX d)
 
 #------------------------------------------------------
 
-include_directories(${CMAKE_SOURCE_DIR}/include/halcon)
+if(USE_HALCON)
+    include_directories(${CMAKE_SOURCE_DIR}/include/halcon)
+endif()
 include_directories(${CMAKE_SOURCE_DIR}/include/tinyxml)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -87,7 +97,9 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 target_link_directories(${NAME} PRIVATE ${CMAKE_SOURCE_DIR}/lib)
 target_link_directories(${NAME} PRIVATE ${CMAKE_SOURCE_DIR}/bin)
 
-target_link_libraries(${NAME} PRIVATE halconcpp)
+if(USE_HALCON)
+    target_link_libraries(${NAME} PRIVATE halconcpp)
+endif()
 target_link_libraries(${NAME} PRIVATE
     debug tinyxml2d
     optimized tinyxml2
@@ -96,6 +108,50 @@ target_link_libraries(${NAME} PRIVATE
 target_link_libraries(${NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::Designer
 )
+
+#------------------------------------------------------
+
+#                       vtk
+
+#------------------------------------------------------
+
+if(USE_VTK)
+    find_package(VTK
+      #9.0 # Compatibility support is not provided if 9.0 is requested.
+      REQUIRED
+      COMPONENTS
+        # Old component names are OK, but deprecated.
+        #vtkCommonCore
+        #vtkRenderingOpenGL2
+        # New names reflect the target names in use.
+        CommonCore
+        RenderingOpenGL2
+        CommonCore
+        RenderingOpenGL2
+        CommonDataModel
+        CommonExecutionModel
+        FiltersSources
+        InteractionStyle
+        InteractionWidgets
+        RenderingAnnotation
+        RenderingCore
+        RenderingFreeType
+        GUISupportQt
+    )
+    target_link_libraries(${NAME} PRIVATE
+        VTK::CommonCore
+        VTK::RenderingOpenGL2
+        VTK::CommonDataModel
+        VTK::CommonExecutionModel
+        VTK::FiltersSources
+        VTK::InteractionStyle
+        VTK::InteractionWidgets
+        VTK::RenderingAnnotation
+        VTK::RenderingCore
+        VTK::RenderingFreeType
+        VTK::GUISupportQt
+    )
+endif()
 
 #------------------------------------------------------
 

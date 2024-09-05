@@ -3,7 +3,7 @@
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/bin)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(CustomWidgetProjects LANGUAGES CXX)
@@ -40,19 +40,27 @@ endmacro(source_group_by_dir)
 
 #------------------------------------------------------
 
-option(BUILD_TEST "Build Test" ON)
+option(BUILD_TEST "Build test_demo" ON)
 option(BUILD_WITH_HALCON "build with Halcon" ON)
+option(BUILD_WITH_VTK "build with vtk" ON)
 
 set_property(GLOBAL PROPERTY USE_HALCON ${BUILD_WITH_HALCON})
+set_property(GLOBAL PROPERTY USE_VTK ${BUILD_WITH_VTK})
 
 if(BUILD_TEST)
-    message(STATUS "build test")
+    message(STATUS "build test_demo")
 endif()
 
 if(BUILD_WITH_HALCON)
     message(STATUS "build with halcon")
 else()
     message(STATUS "build without halcon")
+endif()
+
+if(BUILD_WITH_VTK)
+    message(STATUS "build with vtk")
+else()
+    message(STATUS "build without vtk")
 endif()
 
 #------------------------------------------------------

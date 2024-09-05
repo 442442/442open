@@ -17,7 +17,7 @@ MyCustomUnit::MyCustomUnit(QObject *parent)
     m_widgets.append(new QXmlTreeWidget2Plugin(this));
     m_widgets.append(new QDragTreeWidgetPlugin(this));
     m_widgets.append(new QZoomGraphicViewPlugin(this));
-    //m_widgets.append(new QGraphicViewMiniHudPlugin(this));
+    m_widgets.append(new QGraphicViewMiniHudPlugin(this));
     m_widgets.append(new QCpMonitorPlugin(this));
 }
 

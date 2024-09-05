@@ -15,7 +15,7 @@
 #endif
 #include "Q442CustomGraphicItem.h"
 #include "Q442CustomWidget.h"
-
+//#include "QVtkPointCloudWidget/QVtkPointCloudWidget.h"
 using namespace HalconCpp;
 
 MainWindow::MainWindow(QWidget *parent)
@@ -202,7 +202,7 @@ MainWindow::MainWindow(QWidget *parent)
                 QImage img;
                 img.load("D:\\Git\\442open\\CustomWidgetProjects\\test\\1.jpg");
                 hud1->SetImage(QPixmap::fromImage(img),"123",QList<QGraphicsItem*>()<<ptext);
-                hud1->SetHighLight();                
+                hud1->SetHighLight();
 
                 hud2->SetText("123");
                 hud2->SetImage(QPixmap::fromImage(img));

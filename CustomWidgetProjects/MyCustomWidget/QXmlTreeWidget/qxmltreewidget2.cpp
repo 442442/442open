@@ -23,6 +23,8 @@
 
 tinyxml2::XMLDocument xmlDocWrite2;
 
+const QString XML_COMMENT2=u8"name显示文字;id唯一标识;valueType参数类型(int/float/double/string/path/file);valueRange值域(逗号分割);checkable可勾选;checked勾选;enable使能;";
+
 QXmlTreeWidget2::QXmlTreeWidget2(QWidget *parent)
     : QTreeWidget(parent), mpMenu(new QMenu(this)),
     mpOpenAction(new QAction(u8"打开路径", this)),
@@ -101,7 +103,7 @@ bool QXmlTreeWidget2::SaveXmlConfig(const QString &path)
     tinyxml2::XMLDeclaration* xmlDeclare = xmlDocWrite2.NewDeclaration();
     xmlDocWrite2.InsertEndChild(xmlDeclare);
 
-    tinyxml2::XMLComment* xmlComment = xmlDocWrite2.NewComment(u8"name显示文字;id唯一标识;valueType参数类型(int/float/double/string/path/file);valueRange值域(逗号分割);checkable可勾选;checked勾选;enable使能;");
+    tinyxml2::XMLComment* xmlComment = xmlDocWrite2.NewComment(XML_COMMENT2.toStdString().c_str());
     xmlDocWrite2.InsertEndChild(xmlComment);
 
     tinyxml2::XMLElement* root = xmlDocWrite2.NewElement("Root");
