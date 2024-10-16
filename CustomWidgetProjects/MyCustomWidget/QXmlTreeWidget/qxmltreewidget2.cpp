@@ -61,10 +61,10 @@ QXmlTreeWidget2::~QXmlTreeWidget2()
     }
 }
 
-bool QXmlTreeWidget2::InitFromXmlConfig(const QString &path)
+bool QXmlTreeWidget2::InitFromXmlConfig(const char* path)
 {
     tinyxml2::XMLDocument xmlDocRead;
-    auto error = xmlDocRead.LoadFile(path.toStdString().c_str());
+    auto error = xmlDocRead.LoadFile(path);
     if (error != tinyxml2::XMLError::XML_SUCCESS)
     {
         emit XmlErrorOcurred(tinyxml2::XMLDocument::ErrorIDToName(error));
@@ -79,10 +79,10 @@ bool QXmlTreeWidget2::InitFromXmlConfig(const QString &path)
     return true;
 }
 
-bool QXmlTreeWidget2::InitFromXmlStr(const QString &xml)
+bool QXmlTreeWidget2::InitFromXmlStr(const char* xml)
 {
     tinyxml2::XMLDocument xmlDocRead;
-    auto error = xmlDocRead.Parse(xml.toStdString().c_str());
+    auto error = xmlDocRead.Parse(xml);
     if (error != tinyxml2::XMLError::XML_SUCCESS)
     {
         emit XmlErrorOcurred(tinyxml2::XMLDocument::ErrorIDToName(error));
@@ -97,7 +97,7 @@ bool QXmlTreeWidget2::InitFromXmlStr(const QString &xml)
     return true;
 }
 
-bool QXmlTreeWidget2::SaveXmlConfig(const QString &path)
+bool QXmlTreeWidget2::SaveXmlConfig(const char* path)
 {
     xmlDocWrite2.Clear();
     tinyxml2::XMLDeclaration* xmlDeclare = xmlDocWrite2.NewDeclaration();
@@ -120,7 +120,7 @@ bool QXmlTreeWidget2::SaveXmlConfig(const QString &path)
     QString xmlstr = printer.CStr();
     qDebug() << xmlstr;
 #endif
-    auto ret = xmlDocWrite2.SaveFile(path.toStdString().c_str());
+    auto ret = xmlDocWrite2.SaveFile(path);
     if( ret != tinyxml2::XMLError::XML_SUCCESS)
     {
         emit XmlErrorOcurred(tinyxml2::XMLDocument::ErrorIDToName(ret));

@@ -36,19 +36,19 @@ public:
     /// </summary>
     /// <param name = "path">xml文件路径</param>
     /// <returns>成功/失败</returns>
-    bool InitFromXmlConfig(const QString& path);
+    bool InitFromXmlConfig(const char* path);
     /// <summary>
     /// 初始化树
     /// </summary>
     /// <param name = "xml">xml字符串</param>
     /// <returns>成功/失败</returns>
-    bool InitFromXmlStr(const QString& xml);
+    bool InitFromXmlStr(const char* xml);
     /// <summary>
     /// 保存配置
     /// </summary>
     /// <param name = "path">xml文件路径</param>
     /// <returns>成功/失败</returns>
-    bool SaveXmlConfig(const QString& path);
+    bool SaveXmlConfig(const char* path);
     /// <summary>
     /// 清除所有节点
     /// </summary>
