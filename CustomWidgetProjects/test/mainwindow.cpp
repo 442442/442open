@@ -163,6 +163,7 @@ MainWindow::MainWindow(QWidget *parent)
         QHalconDisplay *pdisp = new QHalconDisplay;
         // playout=new QHBoxLayout(ui->tab_5);
         // ui->horizontalLayout_2->addWidget(pdisp);
+        QImageReader::setAllocationLimit(512);
         connect(ui->tabWidget, &QTabWidget::currentChanged, this, [=](int index) {
             if (index == 4) {
                 try {
@@ -200,8 +201,8 @@ MainWindow::MainWindow(QWidget *parent)
                 ptext->setPos(QPoint(100,100));
 
                 QImage img;
-                img.load("D:\\Git\\442open\\CustomWidgetProjects\\test\\1.jpg");
-                hud1->SetImage(QPixmap::fromImage(img),"123",QList<QGraphicsItem*>()<<ptext);
+                img.load("D:\\mifengding\\24740_00_01_28_173_0ALCB011G0000DE480203673_0ALCB011G0000DE480203675.tiff");
+                hud1->SetImage(QPixmap::fromImage(img),"1233333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333",QList<QGraphicsItem*>()<<ptext);
                 hud1->SetHighLight();
 
                 hud2->SetText("123");

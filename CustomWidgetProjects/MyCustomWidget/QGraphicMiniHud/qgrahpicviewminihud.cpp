@@ -45,18 +45,15 @@ void QGrahpicViewMiniHud::SetImage(const QPixmap& pix, const QString& text)
 void QGrahpicViewMiniHud::SetImage(const QPixmap& pix)
 {
 	mPixmap = pix;
-    if (mpImageLabel->width() < mpImageLabel->height()) {
-        mpImageLabel->setPixmap(mPixmap.scaledToHeight(mpImageLabel->width() / 4 * 4));
-	}
-    else {
-        mpImageLabel->setPixmap(mPixmap.scaledToWidth(mpImageLabel->height() / 4 * 4));
-	}
+    mpImageLabel->setPixmap(mPixmap.scaled(mpImageLabel->size(),Qt::KeepAspectRatio,Qt::FastTransformation));
 }
 
 void QGrahpicViewMiniHud::SetText(const QString& text)
 {
 	mText = text;
-	mpInfoLabel->setText(text);
+    QFontMetricsF fontWidth(mpInfoLabel->font());
+    QString elideNote = fontWidth.elidedText(text,Qt::ElideRight,mpInfoLabel->width());
+    mpInfoLabel->setText(elideNote);
 }
 
 QString QGrahpicViewMiniHud::GetText() const
@@ -89,12 +86,14 @@ QVariant QGrahpicViewMiniHud::GetData(const QString& key)
 
 void QGrahpicViewMiniHud::SetHighLight()
 {
-	mpInfoLabel->setText(HIGHLIGHT_FONT(mText));
+    QFontMetricsF fontWidth(mpInfoLabel->font());
+    QString elideNote = fontWidth.elidedText(mText,Qt::ElideRight,mpInfoLabel->width());
+    mpInfoLabel->setText(HIGHLIGHT_FONT(elideNote));
 }
 
 void QGrahpicViewMiniHud::CancelHighLight()
 {
-	mpInfoLabel->setText(mText);
+    SetText(mText);
 }
 
 void QGrahpicViewMiniHud::mouseDoubleClickEvent(QMouseEvent* event)
@@ -107,7 +106,7 @@ void QGrahpicViewMiniHud::mouseDoubleClickEvent(QMouseEvent* event)
 		mpZoomDlg = new QZoomGraphicDlg();
 		mpZoomDlg->InitSceneSize(mPixmap.width(), mPixmap.height());
 	}
-    for (const auto& item : qAsConst(mItem)) {
+    for (const auto& item : std::as_const(mItem)) {
         mpZoomDlg->AddGraphicsItem(item);
     }
     mpZoomDlg->Update();
