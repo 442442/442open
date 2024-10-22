@@ -10,6 +10,8 @@ namespace  tinyxml2{class XMLElement;}
 class QDESIGNER_WIDGET_EXPORT QXmlTreeWidget2 : public QTreeWidget
 {
     Q_OBJECT
+    Q_PROPERTY(bool Editable READ editable WRITE setEditable NOTIFY editableChanged FINAL)
+
 public:
     /// <summary>
     /// 节点数据结构
@@ -66,12 +68,20 @@ public:
     /// <param name = "value">节点值</returns>
     virtual void SetNodeValue(const QString& id, const QString& value);
 
+    bool editable() const;
+    void setEditable(bool newEditable);
+
 signals:
     /// <summary>
     /// xml异常
     /// </summary>
     /// <param name = "e">异常信息</param>
     void XmlErrorOcurred(const QString& e);
+    /// <summary>
+    /// 可编辑改变
+    /// </summary>
+    /// <param name = "e">异常信息</param>
+    void editableChanged();
 
 private slots:
     /// <summary>
@@ -116,6 +126,7 @@ private:
     QAction *mpOpenAction{ nullptr };
     QAction *mpEditAction{ nullptr };
     QAction *mpCopyAction{ nullptr };
+    bool mEditable{ true };
 };
 Q_DECLARE_METATYPE(QXmlTreeWidget2::NodeData);
 

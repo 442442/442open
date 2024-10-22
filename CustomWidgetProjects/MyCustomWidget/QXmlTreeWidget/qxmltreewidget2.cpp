@@ -165,6 +165,8 @@ void QXmlTreeWidget2::SetNodeValue(const QString &id, const QString &value)
 
 void QXmlTreeWidget2::SlotOnDoubleClickedItem(QTreeWidgetItem *item, int col)
 {
+    if(!mEditable) return;
+
     if (mLastEditer != nullptr)
     {
         this->removeItemWidget(mDoubleClickedItem, col);
@@ -187,7 +189,7 @@ void QXmlTreeWidget2::SlotOnDoubleClickedItem(QTreeWidgetItem *item, int col)
             mLastEditer = spin;
             spin->setRange(range.at(0).toInt(), range.at(1).toInt());
             spin->setValue(item->text(col).toDouble());
-            connect(spin, &QSpinBox::editingFinished, this, [=] {
+            connect(spin, &QSpinBox::editingFinished, this, [=,this] {
                 QSpinBox *spin = qobject_cast<QSpinBox*>(sender());
                 auto value = spin->value();
                 if (mDoubleClickedItem == nullptr) {
@@ -210,7 +212,7 @@ void QXmlTreeWidget2::SlotOnDoubleClickedItem(QTreeWidgetItem *item, int col)
             spin->setRange(range.at(0).toDouble(), range.at(1).toDouble());
             spin->setValue(item->text(col).toDouble());
             spin->setDecimals(3);
-            connect(spin, &QDoubleSpinBox::editingFinished, this, [=] {
+            connect(spin, &QDoubleSpinBox::editingFinished, this, [=,this] {
                 QDoubleSpinBox *spin = qobject_cast<QDoubleSpinBox *>(sender());
                 auto value = spin->value();
                 if (mDoubleClickedItem == nullptr) {
@@ -229,7 +231,7 @@ void QXmlTreeWidget2::SlotOnDoubleClickedItem(QTreeWidgetItem *item, int col)
             QLineEdit* lineEdit = new QLineEdit();
             mLastEditer = lineEdit;
             lineEdit->setText(item->text(col));
-            connect(lineEdit, &QLineEdit::editingFinished, this, [=]{
+            connect(lineEdit, &QLineEdit::editingFinished, this, [=,this]{
                 QLineEdit *edit = qobject_cast<QLineEdit*>(sender());
                 if (mDoubleClickedItem == nullptr) {
                     edit->deleteLater();
@@ -252,7 +254,7 @@ void QXmlTreeWidget2::SlotOnDoubleClickedItem(QTreeWidgetItem *item, int col)
             mLastEditer = cbBox;
             cbBox->addItems(range);
             cbBox->setCurrentText(item->text(col));
-            connect(cbBox, &QComboBox::currentTextChanged, this, [=] (const QString& text) {
+            connect(cbBox, &QComboBox::currentTextChanged, this, [=,this] (const QString& text) {
                 QComboBox *cbBox = qobject_cast<QComboBox*>(sender());
                 if (mDoubleClickedItem == nullptr) {
                     cbBox->deleteLater();
@@ -269,7 +271,7 @@ void QXmlTreeWidget2::SlotOnDoubleClickedItem(QTreeWidgetItem *item, int col)
         else if (data._valueType == "path"){
             QPathEdit* lineEdit = new QPathEdit(item->text(col));
             mLastEditer = lineEdit;
-            connect(lineEdit, &QPathEdit::editingFinished, this, [=]{
+            connect(lineEdit, &QPathEdit::editingFinished, this, [=,this]{
                 QPathEdit *edit = qobject_cast<QPathEdit*>(sender());
                 if (mDoubleClickedItem == nullptr) {
                     edit->deleteLater();
@@ -287,7 +289,7 @@ void QXmlTreeWidget2::SlotOnDoubleClickedItem(QTreeWidgetItem *item, int col)
         else if (data._valueType == "file"){
             QFileEdit* lineEdit = new QFileEdit(item->text(col));
             mLastEditer = lineEdit;
-            connect(lineEdit, &QFileEdit::editingFinished, this, [=]{
+            connect(lineEdit, &QFileEdit::editingFinished, this, [=,this]{
                 QFileEdit *edit = qobject_cast<QFileEdit*>(sender());
                 if (mDoubleClickedItem == nullptr) {
                     edit->deleteLater();
@@ -322,6 +324,7 @@ void QXmlTreeWidget2::InitXml(tinyxml2::XMLElement *element, QTreeWidgetItem *pa
                       node->Attribute("valueRange"), checkable,
                       STRING_IS_ENABLE(enable));
         item->setData(0, Qt::UserRole + 1, QVariant::fromValue(data));
+        mNodeMap[node->Attribute("id")] = item;
 
         if (parent)
         {
@@ -405,6 +408,16 @@ void QXmlTreeWidget2::SaveXmlConfig(tinyxml2::XMLElement *element, QTreeWidgetIt
     }
 }
 
+bool QXmlTreeWidget2::editable() const
+{
+    return mEditable;
+}
+
+void QXmlTreeWidget2::setEditable(bool newEditable)
+{
+    mEditable = newEditable;
+}
+
 void QXmlTreeWidget2::SlotUpdateChildItemStatus(QTreeWidgetItem *item)
 {
     int nCount = item->childCount();
@@ -435,7 +448,8 @@ void QXmlTreeWidget2::SlotOnRightClickedMenu(const QPoint &pos)
             mpMenu->addAction(mpOpenAction);
         }
         mpMenu->addAction(mpCopyAction);
-        mpMenu->addAction(mpEditAction);
+        if(mEditable)
+            mpMenu->addAction(mpEditAction);
     }
     mpMenu->exec(QCursor::pos());
 }

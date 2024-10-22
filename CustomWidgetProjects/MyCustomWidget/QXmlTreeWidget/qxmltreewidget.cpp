@@ -195,7 +195,7 @@ void QXmlTreeWidget::SlotOnDoubleClickedItem(QTreeWidgetItem *item, int col)
         {
             QLineEdit* lineEdit = new QLineEdit(this);
             lineEdit->setText(item->text(col));
-            connect(lineEdit, &QLineEdit::editingFinished, this, [=]{
+            connect(lineEdit, &QLineEdit::editingFinished, this, [=,this]{
                 if(mDoubleClickedItem == nullptr) return;
                 QLineEdit *edit = qobject_cast<QLineEdit*>(this->itemWidget(mDoubleClickedItem, 1));
                 if (!edit) return;
@@ -212,7 +212,7 @@ void QXmlTreeWidget::SlotOnDoubleClickedItem(QTreeWidgetItem *item, int col)
                            , item->data(0,Qt::UserRole + 4).toDouble());
             spin->setDecimals(4);
             spin->setValue(item->text(col).toDouble());
-            connect(spin, &QDoubleSpinBox::editingFinished, this, [=]{
+            connect(spin, &QDoubleSpinBox::editingFinished, this, [=,this]{
                 if(mDoubleClickedItem == nullptr) return;
                 QDoubleSpinBox *spin = qobject_cast<QDoubleSpinBox*>(this->itemWidget(mDoubleClickedItem, 1));
                 if (!spin) return;

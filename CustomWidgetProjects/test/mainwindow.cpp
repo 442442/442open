@@ -28,8 +28,7 @@ MainWindow::MainWindow(QWidget *parent)
     {
         QXmlTreeWidget2 *xmltree = new QXmlTreeWidget2;
         xmltree->InitFromXmlConfig(
-            "D:\\Git\\ceramic_edge_detection\\x64\\Release\\config\\SystemConfig."
-            "xml");
+            "D:\\Git\\empty_framework\\x64\\Release\\config\\ResultTable.xml");
         // xmltree->InitFromXmlConfig("D:\\Git\\ceramic_edge_detection\\x64\\Release\\config\\ResultTable.xml");
         playout->addWidget(xmltree);
         QPushButton *button = new QPushButton();
