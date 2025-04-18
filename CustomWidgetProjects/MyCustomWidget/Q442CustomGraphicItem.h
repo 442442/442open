@@ -1,6 +1,6 @@
 ﻿#pragma once
-#include "QZoomGraohicItems/qgraphicarroritem.h"
-#include "QZoomGraohicItems/qgraphicimgitem.h"
-#include "QZoomGraohicItems/qgraphicnoticetext.h"
-#include "QZoomGraohicItems/qgraphicrectitem.h"
+#include "QZoomGraphicItems/qgraphicarrowitem.h"
+#include "QZoomGraphicItems/qgraphicimgitem.h"
+#include "QZoomGraphicItems/qgraphicnoticetext.h"
+#include "QZoomGraphicItems/qgraphicrectitem.h"
 

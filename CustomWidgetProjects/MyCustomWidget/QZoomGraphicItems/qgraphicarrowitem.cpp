@@ -1,4 +1,4 @@
-﻿#include "qgraphicarroritem.h"
+﻿#include "qgraphicarrowitem.h"
 #include <QPainter>
 #include <cmath>
 
@@ -7,7 +7,7 @@
 #endif
 #define ARROW_HEAD_RATE 20
 
-QGraphicArrorItem::QGraphicArrorItem(QGraphicsItem* parent)
+QGraphicArrowItem::QGraphicArrowItem(QGraphicsItem* parent)
 	: QGraphicsItem(parent)
 {
 	//this->setFlag(ItemIsSelectable);
@@ -15,19 +15,19 @@ QGraphicArrorItem::QGraphicArrorItem(QGraphicsItem* parent)
 	//this->setAcceptHoverEvents(true);
 }
 
-QGraphicArrorItem::QGraphicArrorItem(const QPointF& startPoint,
+QGraphicArrowItem::QGraphicArrowItem(const QPointF& startPoint,
 	const QPointF& endPoint, int lineWidth,
 	QColor color, ArrowType arrowType,
 	QGraphicsItem* parent)
 	: QGraphicsItem(parent), mStartPoint(startPoint), mEndPoint(endPoint),
 	mColor(color), mLineWidth(lineWidth), mArrowType(arrowType) {}
 
-QRectF QGraphicArrorItem::boundingRect() const
+QRectF QGraphicArrowItem::boundingRect() const
 {
-	return QRectF(0, 0, mEndPoint.x(), mEndPoint.y());
+    return QRectF(mStartPoint.x(), mStartPoint.y(), mEndPoint.x() - mStartPoint.x(), mEndPoint.y() - mStartPoint.y());
 }
 
-void QGraphicArrorItem::paint(QPainter* painter, [[maybe_unused]] const QStyleOptionGraphicsItem* option,
+void QGraphicArrowItem::paint(QPainter* painter, [[maybe_unused]] const QStyleOptionGraphicsItem* option,
 	[[maybe_unused]] QWidget* widget)
 {
 	painter->setRenderHint(QPainter::Antialiasing, true);
@@ -70,36 +70,36 @@ void QGraphicArrorItem::paint(QPainter* painter, [[maybe_unused]] const QStyleOp
 	}
 }
 
-void QGraphicArrorItem::SetLineItem(const QPointF& startPoint, const QPointF& endPoint)
+void QGraphicArrowItem::SetLineItem(const QPointF& startPoint, const QPointF& endPoint)
 {
 	mStartPoint = startPoint;
 	mEndPoint = endPoint;
 }
 
-QPointF QGraphicArrorItem::GetLineItem() const
-{
-	return (mStartPoint + mEndPoint) / 2;
-}
-
-void QGraphicArrorItem::SetColor(const QColor& color) {
+void QGraphicArrowItem::SetColor(const QColor& color) {
 	mColor = color;
 }
 
-QColor QGraphicArrorItem::Color() const
+QColor QGraphicArrowItem::Color() const
 {
 	return mColor;
 }
 
-void QGraphicArrorItem::SetLineWidth(const int& width) { mLineWidth = width; }
+void QGraphicArrowItem::SetLineWidth(const int& width) { mLineWidth = width; }
 
-int QGraphicArrorItem::lineWidth() const
+int QGraphicArrowItem::lineWidth() const
 {
 	return mLineWidth;
 }
 
-void QGraphicArrorItem::SetArrowType(ArrowType arrowType)
+void QGraphicArrowItem::SetArrowType(ArrowType arrowType)
 {
 	mArrowType = arrowType;
+}
+
+int QGraphicArrowItem::type() const
+{
+    return (int)QGraphicArrowItem::Arrow;
 }
 
 

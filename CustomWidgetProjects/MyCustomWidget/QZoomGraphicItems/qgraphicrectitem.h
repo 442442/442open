@@ -9,6 +9,8 @@
 class QDESIGNER_WIDGET_EXPORT QGraphicRectItem : public QGraphicsRectItem
 {
 public:
+    enum{ CustomRect = UserType + 2};
+
     explicit QGraphicRectItem(QGraphicsItem *parent = nullptr);
     explicit QGraphicRectItem(const QRectF &rect, QGraphicsItem *parent = nullptr);
     explicit QGraphicRectItem(qreal x, qreal y, qreal w, qreal h, QGraphicsItem *parent = nullptr);
@@ -26,7 +28,11 @@ public:
     int lineWidth() const;
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
-
+    /**
+     * @brief type 图元类型
+     * @return
+     */
+    int type() const override;
 
 private:
     QColor mColor{Qt::red};

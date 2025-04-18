@@ -1,6 +1,6 @@
 ﻿#include "qzoomgraphicdlg.h"
 #include "ui_qzoomgraphicdlg.h"
-#include "QZoomGraohicItems/qgraphicimgitem.h"
+#include "QZoomGraphicItems/qgraphicimgitem.h"
 #include "MyListener.h"
 
 QZoomGraphicDlg::QZoomGraphicDlg(QWidget* parent)

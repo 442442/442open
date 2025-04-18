@@ -5,7 +5,8 @@
 #include <QtUiPlugin/QDesignerExportWidget>
 #include <QFont>
 
-class QGraphicArrorItem;
+class QGraphicRectItem;
+class QGraphicArrowItem;
 /// <summary>
 /// 文字图元，固定大小，可跟随箭头图元
 /// </summary>
@@ -15,10 +16,10 @@ public:
     QGraphicNoticeText(QGraphicsItem *parent = nullptr);
     QGraphicNoticeText(const QString &text, QGraphicsItem *parent = nullptr);
     /**
-     * @brief AttachToArrow 附着到箭头图元上
-     * @param pArrow 箭头图元
+     * @brief AttachToCustomItem 附着到自定义图元上(箭头方框图片)
+     * @param pItem 图元
      */
-    void AttachToArrow(QGraphicArrorItem* pArrow);
+    void AttachToCustomItem(QGraphicsItem* pItem);
     /**
      * @brief SetNoticeTextFont 设置字体(别用父类的)
      * @param font 字体
@@ -29,8 +30,14 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
 private:
-    QGraphicArrorItem* mpArrow{nullptr};
+    bool AttachToArrow(QGraphicArrowItem* pArrow, QPainter* painter, QWidget* widget);
+    bool AttachToRect(QGraphicRectItem* pRect, QPainter* painter, QWidget* widget);
+
+    QGraphicsItem* mpItem{nullptr};
     QFont mFont;
+    QPointF mShift{};
+    bool mInitFlag{false};
+    qreal mOriginScale{};
 };
 
 #endif // QGRAPHICNOTICETEXT_H

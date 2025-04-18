@@ -13,6 +13,8 @@ class QDESIGNER_WIDGET_EXPORT QGraphicImgItem : public QGraphicsPixmapItem
 {
     Q_INTERFACES(QGraphicsPixmapItem)
 public:
+    enum{ CustomPixmap = UserType + 3};
+
     QGraphicImgItem(QGraphicsItem *parent = nullptr);
     QGraphicImgItem(const QPixmap &pixmap, QGraphicsItem *parent = nullptr);
     /// <summary>
@@ -20,6 +22,12 @@ public:
     /// </summary>
     /// <param name = "listener">监听对象</param>
     void AddPixelListener(QPixelListener* listener);
+
+    /**
+     * @brief type 图元类型
+     * @return
+     */
+    int type() const override;
 
 private:
     void mousePressEvent(QGraphicsSceneMouseEvent *ev) override;

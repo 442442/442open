@@ -16,7 +16,7 @@
 #include "Q442CustomGraphicItem.h"
 #include "Q442CustomWidget.h"
 //#include "QVtkPointCloudWidget/QVtkPointCloudWidget.h"
-using namespace HalconCpp;
+//using namespace HalconCpp;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -73,9 +73,9 @@ MainWindow::MainWindow(QWidget *parent)
     }
     // 放大graphicsview demo
     {
-        //QImageReader::setAllocationLimit(500);
+        QImageReader::setAllocationLimit(500);
         QImage img;
-        img.load("D:/Git/test1031/merge/NG/1.jpg", "JPG");
+        img.load("D:\\taocibian\\baidian2\\20240522170243459.jpg", "JPG");
 
         QPixmap pix;
         pix = QPixmap::fromImage(img);
@@ -110,14 +110,14 @@ MainWindow::MainWindow(QWidget *parent)
         // ui->qZoomGraphicView->scene()->addItem(item3);
 
         auto arrow =
-            new QGraphicArrorItem(QPointF(50.5, 10.5), QPointF(50.5, 2050.2));
+            new QGraphicArrowItem(QPointF(1, 1000.5), QPointF(1, 2050.2));
         arrow->SetLineWidth(3);
         // arrow->SetColor(Qt::red);
         // arrow->SetArrowType(QGraphicArrorItem::ArrowType::DoubleArrow);
         ui->qZoomGraphicView->scene()->addItem(arrow);
         // arrow->setFlag(QGraphicsItem::ItemIgnoresTransformations);
 
-        auto rect = new QGraphicRectItem(QRectF(100, 1000, 1000, 1000));
+        auto rect = new QGraphicRectItem(QRectF(7192, 1000, 1000, 1000));
         rect->SetColor(Qt::red);
         rect->SetLineWidth(3);
         ui->qZoomGraphicView->scene()->addItem(rect);
@@ -126,17 +126,17 @@ MainWindow::MainWindow(QWidget *parent)
         QFont font("黑体", 9, 1);
         QBrush brush(Qt::red);
         ptext->setText("123");
-        // ptext->setPos(10,10);
-        // ptext->setFont(font);
-        // ptext->setBrush(brush);
-        //ptext->AttachToArrow(arrow);
+         ptext->setPos(10,10);
+        ptext->setFont(font);
+        ptext->setBrush(brush);
+        ptext->AttachToCustomItem(rect);
         ui->qZoomGraphicView->scene()->addItem(ptext);
 
         connect(ui->pushButton, &QPushButton::clicked, this, [=] {
             arrow->SetColor(Qt::red);
             arrow->SetLineItem(QPointF(250.2, 2800), QPointF(1250.2, 2800));
             arrow->SetLineWidth(3);
-            arrow->SetArrowType(QGraphicArrorItem::ArrowType::NoArrow);
+            arrow->SetArrowType(QGraphicArrowItem::ArrowType::NoArrow);
             ui->qZoomGraphicView->Update();
         });
     }

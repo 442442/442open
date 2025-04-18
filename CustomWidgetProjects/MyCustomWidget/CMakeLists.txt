@@ -193,8 +193,8 @@ endif()
 file(GLOB MY_PUBLIC_HEADERS QXmlTreeWidget/*.h)
 file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${OUTPUT_PATH}/../include/QXmlTreeWidget)
 
-file(GLOB MY_PUBLIC_HEADERS QZoomGraohicItems/*.h)
-file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${OUTPUT_PATH}/../include/QZoomGraohicItems)
+file(GLOB MY_PUBLIC_HEADERS QZoomGraphicItems/*.h)
+file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${OUTPUT_PATH}/../include/QZoomGraphicItems)
 
 file(GLOB MY_PUBLIC_HEADERS QZoomGraphicView/*.h)
 file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${OUTPUT_PATH}/../include/QZoomGraphicView)

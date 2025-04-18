@@ -19,6 +19,11 @@ void QGraphicImgItem::AddPixelListener(QPixelListener *watcher)
      mWatcher = watcher;
 }
 
+int QGraphicImgItem::type() const
+{
+    return (int)CustomPixmap;
+}
+
 void QGraphicImgItem::mousePressEvent(QGraphicsSceneMouseEvent *ev)
 {
     if(mWatcher)

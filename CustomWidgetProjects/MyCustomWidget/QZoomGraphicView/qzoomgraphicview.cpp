@@ -39,11 +39,11 @@ void QZoomGraphicView::Restore()
 {
 	mCurrentRatio = 1;
 	mDefaultRatio = 1;
-	// qDebug() << width << height;
+    //qDebug() << width << height;
 	qreal wscale = rect().width() * 1.0 / mWidth;
 	qreal hscale = rect().height() * 1.0 / mHeight;
-	// qDebug() << rect();
-	//qDebug() << wscale << hscale;
+    // qDebug() << rect();
+    // qDebug() << wscale << hscale;
 	mDefaultRatio = wscale < hscale ? wscale : hscale;
 
 	this->setSceneRect(0, 0, mWidth, mHeight);

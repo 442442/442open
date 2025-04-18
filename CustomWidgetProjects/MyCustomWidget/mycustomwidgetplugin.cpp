@@ -2,10 +2,9 @@
 #include "mycustomwidgetplugin.h"
 #include <QtPlugin>
 #include "Q442CustomWidget.h"
-
-#ifdef BUILD_WITH_HALCON
 #include "Q442Halconwidget.h"
 
+#ifdef BUILD_WITH_HALCON
 QHalconDisplayPlugin::QHalconDisplayPlugin(QObject* parent):QObject(parent)
 {
     m_name = QLatin1String("QHalconDisplay");

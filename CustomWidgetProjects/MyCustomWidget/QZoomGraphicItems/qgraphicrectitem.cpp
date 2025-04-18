@@ -32,3 +32,8 @@ void QGraphicRectItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* 
 
 	QGraphicsRectItem::paint(painter, option, widget);
 }
+
+int QGraphicRectItem::type() const
+{
+    return (int)QGraphicRectItem::CustomRect;
+}
