@@ -68,7 +68,7 @@ void QGraphicNoticeText::paint(QPainter* painter, const QStyleOptionGraphicsItem
 
 bool QGraphicNoticeText::AttachToArrow(QGraphicArrowItem *pArrow, QPainter* painter, QWidget* widget)
 {
-    if(!pArrow) return false;
+    if(!pArrow || !widget) return false;
 
     painter->setPen(pArrow->Color());
     painter->setBrush(pArrow->Color());
@@ -110,7 +110,7 @@ bool QGraphicNoticeText::AttachToArrow(QGraphicArrowItem *pArrow, QPainter* pain
 
 bool QGraphicNoticeText::AttachToRect(QGraphicRectItem *pRect, QPainter *painter, QWidget *widget)
 {
-    if(!pRect) return false;
+    if(!pRect || !widget) return false;
 
     painter->setPen(pRect->Color());
     painter->setBrush(pRect->Color());
@@ -126,12 +126,15 @@ bool QGraphicNoticeText::AttachToRect(QGraphicRectItem *pRect, QPainter *painter
 
     const QRectF newRect = {pRect->boundingRect().topRight(), this->boundingRect().size()};
     const QRectF widgetRect = {0, 0, widget->width() / scaleFactor, widget->height() / scaleFactor };
-    if(!widgetRect.contains(newRect))
+    if(newRect.right() > widgetRect.width())
     {
         mShift.setX(pRect->boundingRect().left() - newRect.right());
     }
+    else
+    {
+        mShift = QPointF{};
+    }
     this->setPos(pRect->boundingRect().topRight() + mShift);
-
     if(!mInitFlag)
     {
         mInitFlag = true;

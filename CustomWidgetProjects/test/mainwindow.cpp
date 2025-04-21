@@ -117,7 +117,7 @@ MainWindow::MainWindow(QWidget *parent)
         ui->qZoomGraphicView->scene()->addItem(arrow);
         // arrow->setFlag(QGraphicsItem::ItemIgnoresTransformations);
 
-        auto rect = new QGraphicRectItem(QRectF(7192, 1000, 1000, 1000));
+        auto rect = new QGraphicRectItem(QRectF(7500, 3000, 100, 100));
         rect->SetColor(Qt::red);
         rect->SetLineWidth(3);
         ui->qZoomGraphicView->scene()->addItem(rect);
