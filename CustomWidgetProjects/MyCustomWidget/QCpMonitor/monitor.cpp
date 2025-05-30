@@ -120,7 +120,7 @@ std::optional<QMap<QString, unsigned long>> Monitor::GetdiskSpace() {
     }
 #else
     auto infoList = QStorageInfo::mountedVolumes();
-    for (const auto &info : infoList) {
+    for (const auto &info : std::as_const(infoList)) {
         freeSpace[info.rootPath()] = info.bytesFree() >> 30;
     }
     return {freeSpace};

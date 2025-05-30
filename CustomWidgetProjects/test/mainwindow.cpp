@@ -73,7 +73,7 @@ MainWindow::MainWindow(QWidget *parent)
     }
     // 放大graphicsview demo
     {
-        QImageReader::setAllocationLimit(500);
+        //QImageReader::setAllocationLimit(500);
         QImage img;
         img.load("D:\\taocibian\\baidian2\\20240522170243459.jpg", "JPG");
 
@@ -161,13 +161,17 @@ MainWindow::MainWindow(QWidget *parent)
     {
         QHalconDisplay *pdisp = new QHalconDisplay;
         // playout=new QHBoxLayout(ui->tab_5);
-        // ui->horizontalLayout_2->addWidget(pdisp);
-        QImageReader::setAllocationLimit(512);
+        ui->horizontalLayout_4->addWidget(pdisp);
+        connect(ui->pushButton_2, &QPushButton::clicked,this,[=]{
+            HObject region;
+            GenEmptyObj(&region);
+            pdisp->MyDrawRect1(region);
+        });
         connect(ui->tabWidget, &QTabWidget::currentChanged, this, [=](int index) {
-            if (index == 4) {
+            if (index == 5) {
                 try {
                     HalconCpp::HObject himg;
-                    HalconCpp::ReadImage(&himg, "D:/Git/test1031/merge/NG/1.jpg");
+                    HalconCpp::ReadImage(&himg, "D:\\taocibian\\baidian2\\20240522170243459.jpg");
                     HalconCpp::HTuple width, height;
                     HalconCpp::GetImageSize(himg, &width, &height);
                     pdisp->SetImgToDisplay(himg);

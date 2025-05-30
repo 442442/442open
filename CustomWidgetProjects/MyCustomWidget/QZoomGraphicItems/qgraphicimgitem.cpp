@@ -3,6 +3,8 @@
 #include <QPixmap>
 #include <QColor>
 #include <QGraphicsSceneEvent>
+#include <qevent.h>
+#include <qfiledialog.h>
 
 QGraphicImgItem::QGraphicImgItem(QGraphicsItem *parent)
     : QGraphicsPixmapItem(parent), mWatcher(nullptr) {
@@ -22,6 +24,19 @@ void QGraphicImgItem::AddPixelListener(QPixelListener *watcher)
 int QGraphicImgItem::type() const
 {
     return (int)CustomPixmap;
+}
+
+void QGraphicImgItem::keyReleaseEvent(QKeyEvent* event)
+{
+    if (event->keyCombination() == QKeyCombination(Qt::CTRL, Qt::Key_S))
+    {
+        if (this->pixmap().isNull())
+            return;
+        QString path = QFileDialog::getSaveFileName(NULL, "Save", "D:/", "Bitmap (*.bmp);; JPEG (*.jpg);; PNG (*.png)");
+        if (path.isEmpty())
+            return;
+        this->pixmap().save(path);
+    }
 }
 
 void QGraphicImgItem::mousePressEvent(QGraphicsSceneMouseEvent *ev)
