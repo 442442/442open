@@ -148,3 +148,12 @@ public:
     QCpMonitorPlugin(QObject *parent = nullptr);
     virtual QWidget *createWidget(QWidget *parent) override;
 };
+
+class QCodeEditPlugin : public QObject, public MyCustomWidgetPlugin
+{
+    Q_OBJECT
+    Q_INTERFACES(QDesignerCustomWidgetInterface)
+public:
+    QCodeEditPlugin(QObject *parent = nullptr);
+    virtual QWidget *createWidget(QWidget *parent) override;
+};

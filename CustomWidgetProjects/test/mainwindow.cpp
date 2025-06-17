@@ -15,7 +15,9 @@
 #endif
 #include "Q442CustomGraphicItem.h"
 #include "Q442CustomWidget.h"
-//#include "QVtkPointCloudWidget/QVtkPointCloudWidget.h"
+#ifdef BUILD_WITH_VTK
+#include "QVtkPointCloudWidget/QVtkPointCloudWidget.h"
+#endif
 //using namespace HalconCpp;
 
 MainWindow::MainWindow(QWidget *parent)
@@ -93,9 +95,11 @@ MainWindow::MainWindow(QWidget *parent)
         },
             Qt::QueuedConnection);
 
-        QGraphicsEllipseItem *item2 = new QGraphicsEllipseItem(0, 0, 200, 100);
+        QGraphicCircleItem *item2 = new QGraphicCircleItem(0, 0, 200, 100);
         item2->setPos(0, 0);
-        item2->setBrush(QBrush(Qt::blue));
+        item2->SetColor(Qt::blue);
+        item2->SetLineWidth(3);
+        ui->qZoomGraphicView->scene()->addItem(item2);
         // item2->setFlags(QGraphicsItem::ItemIsSelectable |
         // QGraphicsItem::ItemIsFocusable
         //                | QGraphicsItem::ItemIsMovable);    //设置可拖动
@@ -195,6 +199,7 @@ MainWindow::MainWindow(QWidget *parent)
         ui->horizontalLayout_2->addWidget(hud1);
         ui->horizontalLayout_2->addWidget(hud2);
         ui->horizontalLayout_2->addWidget(hud3);
+        hud1->SetHighLight();
         // hud->SetHighLight();
         connect(ui->tabWidget, &QTabWidget::currentChanged, this, [=](int index) {
             if (index == 4) {
@@ -206,15 +211,34 @@ MainWindow::MainWindow(QWidget *parent)
                 QImage img;
                 img.load("D:\\mifengding\\24740_00_01_28_173_0ALCB011G0000DE480203673_0ALCB011G0000DE480203675.tiff");
                 hud1->SetImage(QPixmap::fromImage(img),"1233333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333",QList<QGraphicsItem*>()<<ptext);
-                hud1->SetHighLight();
 
                 hud2->SetText("123");
                 hud2->SetImage(QPixmap::fromImage(img));
 
             }
         });
+        this->setStyleSheet("QGrahpicViewMiniHud > QLabel[Selected=\"0\"]{color: black;}"
+                            "QGrahpicViewMiniHud > QLabel[Selected=\"1\"]{color: red;}"
+                            "QGrahpicViewMiniHud > QLabel{font-size:15px;border: 1px solid orange;}");
     }
-
+#ifdef BUILD_WITH_VTK
+    {
+        QVtkPointCloudWidget *pdisp = new QVtkPointCloudWidget;
+        ui->horizontalLayout_4->addWidget(pdisp);
+        //pdisp->setDisplaySample(50);
+        connect(ui->pushButton_2, &QPushButton::clicked,this,[=]{
+            auto ptr=pdisp->ReadTxtPointCloud(u8"D:\\管座\\cloud_csv_to_txt4.txt");
+            //auto ptr=pdisp->ReadTxtPointCloud(u8"D:\\管座\\cloud_csv_to_txt4.txt");
+            pdisp->MeshCloud(ptr, 0.3);
+            //pdisp->AddCloud(ptr);
+        });
+    }
+#endif
+    {
+        auto* codeEdit=new QCodeEdit;
+        codeEdit->setStyleSheet("#LineNumberArea{background-color:lightgray;}");
+        ui->horizontalLayout_4->addWidget(codeEdit);
+    }
 }
 
 MainWindow::~MainWindow() { delete ui; }

@@ -38,12 +38,7 @@ signals:
 	void TextChanged();
 
 private:
-	/// <summary>
-	/// 双击事件
-	/// </summary>
-	/// <param name="event"></param>
-	void mouseDoubleClickEvent(QMouseEvent* event);
-
+    void mouseDoubleClickEvent(QMouseEvent* event) override;
 
 	QVBoxLayout* mpLayout;//布局
 	QLabel* mpInfoLabel;//显示信息label

@@ -199,3 +199,9 @@ file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${OUTPUT_PATH}/../include/QZoomGraphi
 file(GLOB MY_PUBLIC_HEADERS QZoomGraphicView/*.h)
 file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${OUTPUT_PATH}/../include/QZoomGraphicView)
 
+if(USE_VTK)
+
+file(GLOB MY_PUBLIC_HEADERS QVtkPointCloudWidget/QVtkPointCloudWidget.h)
+file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${OUTPUT_PATH}/../include)
+
+endif()

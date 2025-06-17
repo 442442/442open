@@ -7,10 +7,6 @@
 #include <vtkActor.h>
 #include <vtkPolyData.h>
 
-#include <string_view>
-/// <summary>
-/// vtk显示窗口
-/// </summary>
 class QDESIGNER_WIDGET_EXPORT QVtkPointCloudWidget :public QVTKOpenGLNativeWidget
 {
 	Q_OBJECT
@@ -19,22 +15,46 @@ public:
     QVtkPointCloudWidget(QWidget* parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
     QVtkPointCloudWidget(vtkGenericOpenGLRenderWindow* window, QWidget* parent = nullptr,
 		Qt::WindowFlags f = Qt::WindowFlags());
-	/// <summary>
-	/// 获取颜色映射条窗口
-	/// </summary>
-	/// <returns></returns>
-	vtkSmartPointer<vtkScalarBarWidget> GetScalarBarWidget();
-	/// <summary>
-	/// 获取坐标轴窗口
-	/// </summary>
-	/// <returns></returns>
-	vtkSmartPointer<vtkOrientationMarkerWidget> GetMarkerWidget();
-	/// <summary>
-	/// 添加数据并更新所有数据颜色
-	/// </summary>
-	/// <param name="data"></param>
-	void AddDataAndUpdateAllScalarRange(vtkSmartPointer<vtkPolyData> data);
-	void AddDataAndUpdateAllScalarRange(vtkSmartPointer<vtkActor> actor);
+    /**
+     * @brief The ViewPort enum 视角类型
+     */
+    enum ViewPort
+    {
+        Keep = 0,//保持当前视角
+        Left,//左视图
+        Right,//右视图
+        Front,//正视图
+        Back,//后视图
+        Up,//俯视图
+        Down//仰视图
+    };
+    /**
+     * @brief AddCloud 添加点云数据
+     * @param data 数据
+     */
+    void AddCloud(vtkSmartPointer<vtkPolyData> data);
+    void AddCloud(vtkSmartPointer<vtkActor> actor);
+    /**
+     * @brief GetCloudCount 获取点云数量
+     * @return 数量
+     */
+    int GetCloudCount() const;
+    /**
+     * @brief GetCloudIndexList 获取点云序号列表
+     * @return 序号列表
+     */
+    std::list<int> GetCloudIndexList() const;
+    /**
+     * @brief SetCloudVisibility 设置点云可见
+     * @param index 序号
+     * @param visible 是否可见
+     */
+    void SetCloudVisibility(int index, bool visible);
+    /**
+     * @brief RemoveCloud 移除点云
+     * @param index 序号
+     */
+    void RemoveCloud(int index);
 	/// <summary>
 	/// 设置选点大小
 	/// </summary>
@@ -50,39 +70,32 @@ public:
 	/// </summary>
 	/// <param name="f"></param>
 	void SetPickerDisplayPrecision(int f);
-	/// <summary>
-	/// 视角
-	/// </summary>
-	enum ViewPort
-	{
-		Keep = 0,//保持当前视角
-		Left,//左视图
-		Right,//右视图
-		Front,//正视图
-		Back,//后视图
-		Up,//俯视图
-		Down//仰视图
-	};
-	/// <summary>
-	/// 重置视角
-	/// </summary>
-	/// <param name="view">视角类型</param>
+    /**
+     * @brief SetActor2DVisibility 设置2D元件可见
+     * @param visible 是否可见
+     */
+    void SetActor2DVisibility(bool visible);
+    /**
+     * @brief ResetView 重置视角
+     * @param view 视角类型
+     */
 	void ResetView(ViewPort view = Keep);
 	/// <summary>
 	/// 读取txt点云
 	/// </summary>
 	/// <param name="path">路径</param>
+    /// <param name="c">颜色</param>
 	/// <returns></returns>
-	static auto ReadTxtPointCloud(std::string_view path) -> vtkSmartPointer<vtkPolyData>;
-	/// <summary>
-	/// 读取txt点云并按z值上色
-	/// </summary>
-	/// <param name="path">路径</param>
-	/// <returns></returns>
-	static auto ReadTxtPointCloudWithScalarZ(std::string_view path) -> vtkSmartPointer<vtkPolyData>;
+    auto ReadTxtPointCloud(const QString& path) -> vtkSmartPointer<vtkPolyData>;
+    /**
+     * @brief MeshCloud 三角网格化--数据量大的时候会崩溃,算法递归太深,堆栈溢出
+     * @param data 数据
+     * @param alpha mesh距离
+     */
+    void MeshCloud(vtkSmartPointer<vtkPolyData> data, double alpha);
 
 private:
-	void InitActors();
+    void Init();
 	void ResetView(double lookX, double lookY, double lookZ,
 		double upX, double upY, double upZ);
 	void ResetCamera();
@@ -91,7 +104,7 @@ private:
 	vtkSmartPointer<vtkOrientationMarkerWidget> mAxiesWidget;
 	vtkSmartPointer<vtkScalarBarWidget> mScalarBarWidget;
 
-	std::list<vtkSmartPointer<vtkActor>> mActors;
+    std::unordered_map<int, vtkSmartPointer<vtkActor>> mActors;
 
     double minRange;
     double maxRange;

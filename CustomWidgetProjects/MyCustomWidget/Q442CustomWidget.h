@@ -9,3 +9,4 @@
 #include "QGraphicMiniHud/qgrahpicviewminihud.h"
 #include "QZoomGraphicView/qpixellistener.h"
 #include "CustomEdits/qpathedit.h"
+#include "CustomEdits/qcodeedit.h"

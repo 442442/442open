@@ -8,5 +8,6 @@
         <file>icon/spinbox.png</file>
         <file>icon/widget.png</file>
         <file>icon/xmltreeicon.png</file>
+        <file>icon/textediticon.png</file>
     </qresource>
 </RCC>

@@ -7,9 +7,6 @@
 #include <QDebug>
 #include "qzoomgraphicdlg.h"
 
-template<typename T>
-constexpr auto HIGHLIGHT_FONT(T msg) { return QString(u8"<font color=\'red\'><b>%1</b></font>").arg(msg); }
-
 QGrahpicViewMiniHud::QGrahpicViewMiniHud(QWidget* parent)
 	:QWidget{ parent }, mpLayout{ new QVBoxLayout(this) }
 	, mpInfoLabel{ new QLabel(this) }, mpImageLabel{ new QLabel(this) }
@@ -19,10 +16,15 @@ QGrahpicViewMiniHud::QGrahpicViewMiniHud(QWidget* parent)
     mpImageLabel->setAlignment(Qt::AlignCenter);
 	mpImageLabel->setSizePolicy(QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Expanding);
     mpImageLabel->setMinimumSize(100,100);
+    mpImageLabel->setProperty("Selected","0");
+    mpImageLabel->setObjectName("ImageLabel");
 	mpInfoLabel->setSizePolicy(QSizePolicy::Policy::Preferred, QSizePolicy::Policy::Preferred);
 	mpInfoLabel->setAlignment(Qt::AlignCenter);
+    mpInfoLabel->setProperty("Selected","0");
+    mpInfoLabel->setObjectName("InfoLabel");
 	mpLayout->setContentsMargins(0, 0, 0, 0);
-	mpLayout->setSpacing(5);
+    mpLayout->setSpacing(0);
+    this->setProperty("Selected","0");
 }
 
 QGrahpicViewMiniHud::~QGrahpicViewMiniHud()
@@ -86,14 +88,18 @@ QVariant QGrahpicViewMiniHud::GetData(const QString& key)
 
 void QGrahpicViewMiniHud::SetHighLight()
 {
-    QFontMetricsF fontWidth(mpInfoLabel->font());
-    QString elideNote = fontWidth.elidedText(mText,Qt::ElideRight,mpInfoLabel->width());
-    mpInfoLabel->setText(HIGHLIGHT_FONT(elideNote));
+    mpInfoLabel->setProperty("Selected","1");
+    mpImageLabel->setProperty("Selected","1");
+    this->setProperty("Selected","1");
+    this->setStyleSheet("");
 }
 
 void QGrahpicViewMiniHud::CancelHighLight()
 {
-    SetText(mText);
+    mpInfoLabel->setProperty("Selected","0");
+    mpImageLabel->setProperty("Selected","0");
+    this->setProperty("Selected","0");
+    this->setStyleSheet("");
 }
 
 void QGrahpicViewMiniHud::mouseDoubleClickEvent(QMouseEvent* event)
@@ -103,7 +109,9 @@ void QGrahpicViewMiniHud::mouseDoubleClickEvent(QMouseEvent* event)
 
     if (mpZoomDlg == nullptr)
 	{
-		mpZoomDlg = new QZoomGraphicDlg();
+        mpZoomDlg = new QZoomGraphicDlg(this);
+        if(auto parent = qobject_cast<QWidget*>(this->parent()))
+            mpZoomDlg->setWindowIcon(parent->windowIcon());
 		mpZoomDlg->InitSceneSize(mPixmap.width(), mPixmap.height());
 	}
     for (const auto& item : std::as_const(mItem)) {
@@ -115,8 +123,3 @@ void QGrahpicViewMiniHud::mouseDoubleClickEvent(QMouseEvent* event)
 
 	mpZoomDlg->show();
 }
-
-
-
-
-

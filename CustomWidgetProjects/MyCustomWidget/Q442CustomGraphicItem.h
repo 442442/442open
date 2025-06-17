@@ -3,4 +3,5 @@
 #include "QZoomGraphicItems/qgraphicimgitem.h"
 #include "QZoomGraphicItems/qgraphicnoticetext.h"
 #include "QZoomGraphicItems/qgraphicrectitem.h"
+#include "QZoomGraphicItems/qgraphiccircleitem.h"
 

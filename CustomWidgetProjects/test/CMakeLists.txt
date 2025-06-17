@@ -10,6 +10,10 @@ if(USE_HALCON)
     add_definitions(-DBUILD_WITH_HALCON)
 endif()
 
+if(USE_VTK)
+    add_definitions(-DBUILD_WITH_VTK)
+endif()
+
 #------------------------------------------------------
 
 #                       set qt

@@ -30,10 +30,10 @@ public:
     int type() const override;
 
     /**
-     * @brief keyReleaseEvent 保存事件
+     * @brief keyPressEvent 保存事件
      * @param event
      */
-    void keyReleaseEvent(QKeyEvent* event) override;
+    void keyPressEvent(QKeyEvent* event) override;
 
 private:
     void mousePressEvent(QGraphicsSceneMouseEvent *ev) override;

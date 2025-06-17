@@ -305,3 +305,26 @@ QWidget *QCpMonitorPlugin::createWidget(QWidget *parent)
 {
     return new QCpMonitor(parent);
 }
+
+QCodeEditPlugin::QCodeEditPlugin(QObject *parent)
+{
+    m_name = QLatin1String("QCodeEdit");
+    m_include=QLatin1String("CustomEdits/qcodeedit.h");
+    m_toolTip=QString(u8"代码编辑器");
+    m_domXml="<widget class=\"QCodeEdit\" name=\"qCodeEdit\">\n"
+               " <property name=\"geometry\">\n"
+               "  <rect>\n"
+               "   <x>0</x>\n"
+               "   <y>0</y>\n"
+               "   <width>300</width>\n"
+               "   <height>400</height>\n"
+               "  </rect>\n"
+               " </property>\n"
+               "</widget>\n";
+    m_icon = QIcon("://icon/textediticon.png");
+}
+
+QWidget *QCodeEditPlugin::createWidget(QWidget *parent)
+{
+    return new QCodeEdit(parent);
+}

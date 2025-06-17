@@ -26,7 +26,7 @@ int QGraphicImgItem::type() const
     return (int)CustomPixmap;
 }
 
-void QGraphicImgItem::keyReleaseEvent(QKeyEvent* event)
+void QGraphicImgItem::keyPressEvent(QKeyEvent* event)
 {
     if (event->keyCombination() == QKeyCombination(Qt::CTRL, Qt::Key_S))
     {
