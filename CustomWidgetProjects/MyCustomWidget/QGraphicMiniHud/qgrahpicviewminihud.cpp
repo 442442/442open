@@ -14,11 +14,11 @@ QGrahpicViewMiniHud::QGrahpicViewMiniHud(QWidget* parent)
 	mpLayout->addWidget(mpImageLabel);
 	mpLayout->addWidget(mpInfoLabel);
     mpImageLabel->setAlignment(Qt::AlignCenter);
-	mpImageLabel->setSizePolicy(QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Expanding);
+    mpImageLabel->setSizePolicy(QSizePolicy::Policy::Preferred, QSizePolicy::Policy::Expanding);
     mpImageLabel->setMinimumSize(100,100);
     mpImageLabel->setProperty("Selected","0");
     mpImageLabel->setObjectName("ImageLabel");
-	mpInfoLabel->setSizePolicy(QSizePolicy::Policy::Preferred, QSizePolicy::Policy::Preferred);
+    mpInfoLabel->setSizePolicy(QSizePolicy::Policy::Ignored, QSizePolicy::Policy::Preferred);
 	mpInfoLabel->setAlignment(Qt::AlignCenter);
     mpInfoLabel->setProperty("Selected","0");
     mpInfoLabel->setObjectName("InfoLabel");
@@ -54,7 +54,7 @@ void QGrahpicViewMiniHud::SetText(const QString& text)
 {
 	mText = text;
     QFontMetricsF fontWidth(mpInfoLabel->font());
-    QString elideNote = fontWidth.elidedText(text,Qt::ElideRight,mpInfoLabel->width());
+    QString elideNote = fontWidth.elidedText(text,Qt::ElideMiddle,mpInfoLabel->width());
     mpInfoLabel->setText(elideNote);
 }
 
@@ -122,4 +122,9 @@ void QGrahpicViewMiniHud::mouseDoubleClickEvent(QMouseEvent* event)
     mpZoomDlg->setWindowTitle(mText);
 
 	mpZoomDlg->show();
+}
+
+void QGrahpicViewMiniHud::resizeEvent(QResizeEvent *event)
+{
+    SetText(mText);
 }

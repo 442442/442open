@@ -194,11 +194,11 @@ MainWindow::MainWindow(QWidget *parent)
     // minihud
     {
         QGrahpicViewMiniHud* hud1=new QGrahpicViewMiniHud;
-        QGrahpicViewMiniHud* hud2=new QGrahpicViewMiniHud;
-        QGrahpicViewMiniHud* hud3=new QGrahpicViewMiniHud;
+        //QGrahpicViewMiniHud* hud2=new QGrahpicViewMiniHud;
+        //QGrahpicViewMiniHud* hud3=new QGrahpicViewMiniHud;
         ui->horizontalLayout_2->addWidget(hud1);
-        ui->horizontalLayout_2->addWidget(hud2);
-        ui->horizontalLayout_2->addWidget(hud3);
+        //ui->horizontalLayout_2->addWidget(hud2);
+        //ui->horizontalLayout_2->addWidget(hud3);
         hud1->SetHighLight();
         // hud->SetHighLight();
         connect(ui->tabWidget, &QTabWidget::currentChanged, this, [=](int index) {
@@ -212,8 +212,8 @@ MainWindow::MainWindow(QWidget *parent)
                 img.load("D:\\mifengding\\24740_00_01_28_173_0ALCB011G0000DE480203673_0ALCB011G0000DE480203675.tiff");
                 hud1->SetImage(QPixmap::fromImage(img),"1233333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333",QList<QGraphicsItem*>()<<ptext);
 
-                hud2->SetText("123");
-                hud2->SetImage(QPixmap::fromImage(img));
+                //hud2->SetText("123");
+                //hud2->SetImage(QPixmap::fromImage(img));
 
             }
         });

@@ -39,6 +39,7 @@ signals:
 
 private:
     void mouseDoubleClickEvent(QMouseEvent* event) override;
+    void resizeEvent(QResizeEvent* event) override;
 
 	QVBoxLayout* mpLayout;//布局
 	QLabel* mpInfoLabel;//显示信息label

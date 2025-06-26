@@ -6,7 +6,7 @@ set_property(GLOBAL PROPERTY OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/bin)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-project(CustomWidgetProjects LANGUAGES CXX)
+project(CustomWidgetProjects LANGUAGES CXX VERSION 1.5)
 
 #------------------------------------------------------
 
