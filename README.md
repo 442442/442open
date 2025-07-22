@@ -25,24 +25,22 @@ vtk点云显示窗口（添加点选，z上色）
 
 #### 安装教程
 
-1.  需要cmake3.16以上，halcon，qt5/qt6
-2.  BUILD_TEST是否构建test项目，BUILD_WITH_HALCON是否构建含halcon控件,BUILD_WITH_VTK是否构建含vtk控件
-3.  lib和dll在构建目录下bin中，头文件在构建目录下include中
+1. 需要cmake3.16以上，halcon，qt5/qt6
+2. BUILD_TEST是否构建test项目，BUILD_WITH_HALCON是否构建含halcon控件,BUILD_WITH_VTK是否构建含vtk控件
+3. lib和dll在构建目录下bin中，头文件在构建目录下include中
+4. VTK_DIR=build\VTK\lib\cmake\vtk-x.x
+5. 带vtk编译不支持qtplugin
 
+#### 控件库使用说明
 
-##### 控件库使用说明
-
-1.  加入lib和dll直接使用。或将dll放进qt安装目录下的QtCreator/bin/plugins/designer中，或qt版本号/qt版本/plugins/designer中
+1. 加入lib和dll直接使用。或将dll放进qt安装目录下的QtCreator/bin/plugins/designer中，或qt版本号/qt版本/plugins/designer中
 可在qtcreator或vs中使用designer直接拖控件使用(需要版本统一)
-2.  如果启用BUILD_WITH_VTK，该dll不能在qtcreator或vs中使用designer，vtk9不支持qt插件
+2. 如果启用BUILD_WITH_VTK，该dll不能在qtcreator或vs中使用designer，vtk9不支持qt插件
 
 #### 已知bug
-
-1.	XmlTreeWidget2按特定顺序操作崩溃的的bug
-	双击path/file类型参数，双击空白其他非可编辑item，再改变窗口大小
-
-2.	电脑性能监控，qt5.14.2版本无法发送硬盘map信号
 
 3.	halcon窗口release下字体显示异常
 
 4.	halcon窗口region点击信息弹出异常
+
+1.  property切换stylesheet失败

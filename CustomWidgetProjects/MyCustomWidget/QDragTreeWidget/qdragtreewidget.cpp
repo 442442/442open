@@ -13,6 +13,27 @@ QDragTreeWidget::QDragTreeWidget(QWidget* parent)
     this->setDragEnabled(true);
 }
 
+QDragTreeWidget::InteractionDragBehavior QDragTreeWidget::Behavior() const
+{
+    return m_Behavior;
+}
+
+void QDragTreeWidget::setBehavior(const InteractionDragBehavior &Behavior)
+{
+    m_Behavior = Behavior;
+}
+
+bool QDragTreeWidget::IsValid()
+{
+    for (int i = 0; i < this->topLevelItemCount(); ++i) {
+        if(!IsValid(topLevelItem(i)))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 void QDragTreeWidget::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton)
@@ -42,7 +63,10 @@ void QDragTreeWidget::mouseMoveEvent(QMouseEvent *event)
                 auto realRect = QRect(itemRect.x(), itemRect.y() + headerRect.height(), itemRect.width(), itemRect.height());
                 drag->setPixmap(this->grab(realRect));
                 if(drag->exec(Qt::CopyAction|Qt::MoveAction,Qt::MoveAction) == Qt::MoveAction)
+                {
                     delete item;
+                    emit itemDragged();
+                }
             }
         }
     }
@@ -56,12 +80,12 @@ void QDragTreeWidget::mouseReleaseEvent(QMouseEvent *event)
 
 void QDragTreeWidget::dragEnterEvent(QDragEnterEvent *event)
 {
-    QWidget *source =  qobject_cast<QDragTreeWidget *>(event->source());
+    QDragTreeWidget *source =  qobject_cast<QDragTreeWidget *>(event->source());
     TreeItemMimeData *pMimeData = (TreeItemMimeData *)(event->mimeData());
     if (pMimeData->hasFormat("ItemMimeData"))
     {
         if (source != this)
-            if(m_Behavior == InteractionDragBehavior::DragToCopy)
+            if(source->Behavior() == InteractionDragBehavior::DragToCopy)
                 event->setDropAction(Qt::CopyAction);
             else
                 event->setDropAction(Qt::MoveAction);
@@ -73,7 +97,7 @@ void QDragTreeWidget::dragEnterEvent(QDragEnterEvent *event)
 
 void QDragTreeWidget::dragMoveEvent(QDragMoveEvent *event)
 {
-    QWidget *source =  qobject_cast<QDragTreeWidget *>(event->source());
+    QDragTreeWidget *source =  qobject_cast<QDragTreeWidget *>(event->source());
     TreeItemMimeData *pMimeData = (TreeItemMimeData *)(event->mimeData());
     if (source == this && pMimeData->hasFormat("ItemMimeData"))
     {
@@ -98,7 +122,7 @@ void QDragTreeWidget::dragMoveEvent(QDragMoveEvent *event)
     }
     else if(source != this && pMimeData->hasFormat("ItemMimeData"))
     {
-        if(m_Behavior == InteractionDragBehavior::DragToCopy)
+        if(source->Behavior() == InteractionDragBehavior::DragToCopy)
             event->setDropAction(Qt::CopyAction);
         else
             event->setDropAction(Qt::MoveAction);
@@ -108,7 +132,7 @@ void QDragTreeWidget::dragMoveEvent(QDragMoveEvent *event)
 
 void QDragTreeWidget::dropEvent(QDropEvent *event)
 {
-    QWidget *source =  qobject_cast<QDragTreeWidget *>(event->source());
+    QDragTreeWidget *source =  qobject_cast<QDragTreeWidget *>(event->source());
     const TreeItemMimeData *pMimeData = (const TreeItemMimeData *)(event->mimeData());
     if (pMimeData->hasFormat("ItemMimeData"))
     {
@@ -122,16 +146,17 @@ void QDragTreeWidget::dropEvent(QDropEvent *event)
         if (currentItem)
         {
             currentItem->addChild(pItem);
-            pItem->setExpanded(1);
+            currentItem->setExpanded(true);
+            pItem->setExpanded(true);
         }
         else
         {
             this->addTopLevelItem(pItem);
-            pItem->setExpanded(1);
+            pItem->setExpanded(true);
         }
         if (source != this)
         {
-            if(m_Behavior == InteractionDragBehavior::DragToCopy)
+            if(source->Behavior() == InteractionDragBehavior::DragToCopy)
                 event->setDropAction(Qt::CopyAction);
             else
                 event->setDropAction(Qt::MoveAction);
@@ -140,6 +165,7 @@ void QDragTreeWidget::dropEvent(QDropEvent *event)
         {
             event->setDropAction(Qt::MoveAction);
         }
+        emit itemDropped();
         event->accept();
     }
 }
@@ -174,12 +200,19 @@ bool QDragTreeWidget::isRelated(const QTreeWidgetItem* parent, const QTreeWidget
     return false;
 }
 
-QDragTreeWidget::InteractionDragBehavior QDragTreeWidget::Behavior() const
+bool QDragTreeWidget::IsValid(const QTreeWidgetItem *parent)
 {
-    return m_Behavior;
+    for (int i = 0; i < parent->childCount(); ++i) {
+        if(auto child = parent->child(i);
+            child->data(0, ItemLevel).toInt() <= parent->data(0, ItemLevel).toInt()){
+            return false;
+        }
+        else{
+            if(!IsValid(child))
+                return false;
+        }
+    }
+    return true;
 }
 
-void QDragTreeWidget::setBehavior(const InteractionDragBehavior &Behavior)
-{
-    m_Behavior = Behavior;
-}
+

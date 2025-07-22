@@ -41,38 +41,52 @@ MainWindow::MainWindow(QWidget *parent)
     // drag树demo
     {
         playout = new QHBoxLayout(ui->tab_2);
+        auto btn = new QPushButton;
+        playout->addWidget(btn);
         QDragTreeWidget *tree = new QDragTreeWidget;
         playout->addWidget(tree);
         tree->setBehavior(QDragTreeWidget::InteractionDragBehavior::DragToMove);
         tree = new QDragTreeWidget;
         playout->addWidget(tree);
+        tree->setBehavior(QDragTreeWidget::InteractionDragBehavior::DragToCopy);
 
         QList<QTreeWidgetItem *> list;
         QTreeWidgetItem *item = new QTreeWidgetItem();
         item->setText(0, "parent");
+        item->setData(0, QDragTreeWidget::ItemLevel, 1);
         list.append(item);
 
         QTreeWidgetItem *child = new QTreeWidgetItem();
         child->setText(0, "child1");
+        child->setData(0, QDragTreeWidget::ItemLevel, 2);
         item->addChild(child);
         child = new QTreeWidgetItem();
         child->setText(0, "child2");
+        child->setData(0, QDragTreeWidget::ItemLevel, 2);
         item->addChild(child);
 
         item = new QTreeWidgetItem();
         item->setText(0, "parent2");
+        item->setData(0, QDragTreeWidget::ItemLevel, 1);
         list.append(item);
 
         child = new QTreeWidgetItem();
         child->setText(0, "child3");
+        child->setData(0, QDragTreeWidget::ItemLevel, 2);
         item->addChild(child);
         child = new QTreeWidgetItem();
         child->setText(0, "child4");
+        child->setData(0, QDragTreeWidget::ItemLevel, 2);
         item->addChild(child);
 
         tree->addTopLevelItems(list);
-        tree->setBehavior(QDragTreeWidget::InteractionDragBehavior::DragToMove);
+
+
+        connect(btn,&QPushButton::clicked,this,[=]{ qDebug()<<tree->IsValid();});
+        connect(tree,&QDragTreeWidget::itemDragged,this,[=]{ qDebug()<<"drag";});
+        connect(tree,&QDragTreeWidget::itemDropped,this,[=]{ qDebug()<<"drop";});
     }
+
     // 放大graphicsview demo
     {
         //QImageReader::setAllocationLimit(500);

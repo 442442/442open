@@ -10,6 +10,8 @@ class QDESIGNER_WIDGET_EXPORT QDragTreeWidget : public QTreeWidget
     Q_PROPERTY(InteractionDragBehavior m_Behavior READ Behavior WRITE setBehavior NOTIFY behaviorChanged FINAL)
 
 public:
+    enum { ItemLevel = Qt::UserRole + 1 };// 判断item父子关系正确
+
     QDragTreeWidget(QWidget* parent = Q_NULLPTR);
     /// <summary>
     /// 2个树互相拖拽
@@ -20,11 +22,18 @@ public:
         DragToMove//移动节点
     };
     Q_ENUM(InteractionDragBehavior)
+
     InteractionDragBehavior Behavior() const;
     void setBehavior(const InteractionDragBehavior &Behavior);
+    /// <summary>
+    /// 判断item父子关系正确
+    /// </summary>
+    bool IsValid();
 
 signals:
     void behaviorChanged();
+    void itemDragged();
+    void itemDropped();
 
 protected:
     void mouseMoveEvent(QMouseEvent *event);
@@ -40,6 +49,7 @@ protected:
 
 private:
     bool isRelated(const QTreeWidgetItem* parent, const QTreeWidgetItem* child);
+    bool IsValid(const QTreeWidgetItem* parent);
 
     QPoint m_startDragPoint;
     InteractionDragBehavior m_Behavior;
