@@ -30,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent)
     {
         QXmlTreeWidget2 *xmltree = new QXmlTreeWidget2;
         xmltree->InitFromXmlConfig(
-            "D:\\Git\\empty_framework\\x64\\Release\\config\\ResultTable.xml");
+           "D:\\Git\\QtPluginSystem\\x64\\Release\\config\\SystemConfig.xml");
         // xmltree->InitFromXmlConfig("D:\\Git\\ceramic_edge_detection\\x64\\Release\\config\\ResultTable.xml");
         playout->addWidget(xmltree);
         QPushButton *button = new QPushButton();
@@ -147,7 +147,7 @@ MainWindow::MainWindow(QWidget *parent)
          ptext->setPos(10,10);
         ptext->setFont(font);
         ptext->setBrush(brush);
-        ptext->AttachToCustomItem(rect);
+        ptext->AttachToCustomItem(item2);
         ui->qZoomGraphicView->scene()->addItem(ptext);
 
         connect(ui->pushButton, &QPushButton::clicked, this, [=] {

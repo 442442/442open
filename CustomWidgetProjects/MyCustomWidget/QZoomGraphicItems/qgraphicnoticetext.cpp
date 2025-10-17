@@ -1,6 +1,7 @@
 ﻿#include "qgraphicnoticetext.h"
 #include "qgraphicarrowitem.h"
 #include "qgraphicrectitem.h"
+#include "qgraphiccircleitem.h"
 #include <QPainter>
 #include <QWidget>
 #include <QDebug>
@@ -45,6 +46,9 @@ void QGraphicNoticeText::paint(QPainter* painter, const QStyleOptionGraphicsItem
             break;
         case (int)QGraphicsItem::UserType + 2:
             repaint = AttachToRect(static_cast<QGraphicRectItem*>(mpItem), painter, widget);
+            break;
+        case (int)QGraphicsItem::UserType + 4:
+            repaint = AttachToCircle(static_cast<QGraphicCircleItem*>(mpItem), painter, widget);
             break;
         default:
             break;
@@ -135,6 +139,44 @@ bool QGraphicNoticeText::AttachToRect(QGraphicRectItem *pRect, QPainter *painter
         mShift = QPointF{};
     }
     this->setPos(pRect->boundingRect().topRight() + mShift);
+    if(!mInitFlag)
+    {
+        mInitFlag = true;
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
+
+bool QGraphicNoticeText::AttachToCircle(QGraphicCircleItem *pCircle, QPainter *painter, QWidget *widget)
+{
+    if(!pCircle || !widget) return false;
+
+    painter->setPen(pCircle->Color());
+    painter->setBrush(pCircle->Color());
+
+    double scaleFactor = painter->transform().m11();
+    if (scaleFactor == 0)
+        scaleFactor = 1;
+    QFont font(this->GetNoticeTextFont());
+    int fontSize = pCircle->lineWidth() * LINE_WIDTH_FONT_RATIO / scaleFactor;
+    font.setPointSize(fontSize);
+    font.setPointSize(fontSize);
+    this->setFont(font);
+
+    const QRectF newRect = {pCircle->boundingRect().topRight(), this->boundingRect().size()};
+    const QRectF widgetRect = {0, 0, widget->width() / scaleFactor, widget->height() / scaleFactor };
+    if(newRect.right() > widgetRect.width())
+    {
+        mShift.setX(pCircle->boundingRect().left() - newRect.right());
+    }
+    else
+    {
+        mShift = QPointF{};
+    }
+    this->setPos(pCircle->boundingRect().topRight() + mShift);
     if(!mInitFlag)
     {
         mInitFlag = true;

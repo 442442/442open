@@ -11,6 +11,7 @@ class QDESIGNER_WIDGET_EXPORT QXmlTreeWidget2 : public QTreeWidget
 {
     Q_OBJECT
     Q_PROPERTY(bool Editable READ editable WRITE setEditable NOTIFY editableChanged FINAL)
+    Q_PROPERTY(bool nodeEditable READ nodeEditable WRITE setNodeEditable NOTIFY nodeEditableChanged FINAL)
 
 public:
     /// <summary>
@@ -29,7 +30,6 @@ public:
         QString _checkable;
         bool _enable;
     };
-
 
     explicit QXmlTreeWidget2(QWidget *parent = nullptr);
     ~QXmlTreeWidget2();
@@ -71,6 +71,9 @@ public:
     bool editable() const;
     void setEditable(bool newEditable);
 
+    bool nodeEditable() const;
+    void setNodeEditable(bool newNodeEditable);
+
 signals:
     /// <summary>
     /// xml异常
@@ -83,13 +86,9 @@ signals:
     /// <param name = "e">异常信息</param>
     void editableChanged();
 
+    void nodeEditableChanged();
+
 private slots:
-    /// <summary>
-    /// 鼠标双击事件
-    /// </summary>
-    /// <param name = "item">树item</param>
-    /// <param name = "col">列</returns>
-    virtual void SlotOnDoubleClickedItem(QTreeWidgetItem* item, int col);
     /// <summary>
     /// 更新子节点状态
     /// </summary>
@@ -99,8 +98,9 @@ private slots:
 
     void SlotOnRightClickedMenu(const QPoint &pos);
     void SlotOnOpenAction();
-    void SlotOnEditAction();
     void SlotOnCopyAction();
+    void SlotOnAddAction();
+    void SlotOnDelAction();
 
 private:
     /// <summary>
@@ -121,12 +121,14 @@ private:
     QMap<QString, QTreeWidgetItem*> mNodeMap;//id，节点
     QTreeWidgetItem* mDoubleClickedItem{ nullptr };
     QTreeWidgetItem* mRightClickedItem{ nullptr };
-    QWidget *mLastEditer{ nullptr };
     QMenu *mpMenu{ nullptr };
     QAction *mpOpenAction{ nullptr };
-    QAction *mpEditAction{ nullptr };
     QAction *mpCopyAction{ nullptr };
+    QAction *mpAddAction{ nullptr };
+    QAction *mpDelAction{ nullptr };
     bool mEditable{ true };
+    bool mNodeEditable{ false };
+
 };
 Q_DECLARE_METATYPE(QXmlTreeWidget2::NodeData);
 

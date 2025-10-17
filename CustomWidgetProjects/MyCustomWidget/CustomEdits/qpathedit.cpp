@@ -33,6 +33,11 @@ QPathEdit::~QPathEdit()
     mpButton = nullptr;
 }
 
+void QPathEdit::setText(const QString &text)
+{
+    mpEdit->setText(text);
+}
+
 QString QPathEdit::text() const
 {
     return mpEdit->text();
@@ -65,6 +70,11 @@ QFileEdit::~QFileEdit()
     mpEdit = nullptr;
     delete mpButton;
     mpButton = nullptr;
+}
+
+void QFileEdit::setText(const QString &text)
+{
+    mpEdit->setText(text);
 }
 
 QString QFileEdit::text() const

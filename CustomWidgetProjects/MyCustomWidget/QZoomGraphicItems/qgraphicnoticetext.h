@@ -7,6 +7,7 @@
 
 class QGraphicRectItem;
 class QGraphicArrowItem;
+class QGraphicCircleItem;
 /// <summary>
 /// 文字图元，固定大小，可跟随箭头图元
 /// </summary>
@@ -32,6 +33,7 @@ public:
 private:
     bool AttachToArrow(QGraphicArrowItem* pArrow, QPainter* painter, QWidget* widget);
     bool AttachToRect(QGraphicRectItem* pRect, QPainter* painter, QWidget* widget);
+    bool AttachToCircle(QGraphicCircleItem* pCircle, QPainter* painter, QWidget* widget);
 
     QGraphicsItem* mpItem{nullptr};
     QFont mFont;

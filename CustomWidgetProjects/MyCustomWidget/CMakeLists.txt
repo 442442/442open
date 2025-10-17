@@ -190,7 +190,7 @@ file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${OUTPUT_PATH}/../include)
 
 endif()
 
-file(GLOB MY_PUBLIC_HEADERS QXmlTreeWidget/*.h)
+file(GLOB MY_PUBLIC_HEADERS QXmlTreeWidget/qxmltreewidget2.h QXmlTreeWidget/qxmltreewidget.h)
 file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${OUTPUT_PATH}/../include/QXmlTreeWidget)
 
 file(GLOB MY_PUBLIC_HEADERS QZoomGraphicItems/*.h)

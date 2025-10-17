@@ -15,6 +15,7 @@ public:
     explicit QPathEdit(const QString &path, QWidget *parent = nullptr);
     ~QPathEdit();
 
+    void setText(const QString& text);
     QString text() const;
 
 signals:
@@ -33,6 +34,7 @@ public:
     explicit QFileEdit(const QString& path,QWidget *parent = nullptr);
     ~QFileEdit();
 
+    void setText(const QString& text);
     QString text() const;
 
 signals:
