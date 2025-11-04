@@ -1,8 +1,15 @@
 ﻿#include "monitor.h"
 #include <QStorageInfo>
+#if defined(WIN32) || defined(_MSC_VER) || defined(_WIN64)
 #include <Windows.h>
 #include <tchar.h>
+#elif defined(__linux__) || defined(__linux) || defined (__gnu_linux__)
+#include <fstream>
+#include <iostream>
+#include <unistd.h>
+#endif
 
+#if defined(WIN32) || defined(_MSC_VER) || defined(_WIN64)
 __int64 Filetime2Int64(const FILETIME *ftime) {
     LARGE_INTEGER li;
     li.LowPart = ftime->dwLowDateTime;
@@ -13,6 +20,39 @@ __int64 Filetime2Int64(const FILETIME *ftime) {
 __int64 CompareFileTime(FILETIME preTime, FILETIME nowTime) {
     return Filetime2Int64(&nowTime) - Filetime2Int64(&preTime);
 }
+#elif defined(__linux__) || defined(__linux) || defined (__gnu_linux__)
+
+struct CpuOccupy
+{
+    unsigned long user;
+    unsigned long nice;
+    unsigned long system;
+    unsigned long idle;
+};
+
+CpuOccupy GetFileTime()
+{
+    std::ifstream file("/proc/stat");
+    std::string line;
+    unsigned long user = 0, nice = 0, system = 0, idle = 0;
+    if (file.is_open()){
+        std::getline(file,line);
+        sscanf(line.c_str(),"cpu %lu %lu %lu %lu", &user,&nice,&system,&idle);
+    }
+    return {user,nice,system,idle};
+}
+
+double CalculateCpuUsage(const CpuOccupy& prev, const CpuOccupy& cur)
+{
+    unsigned long total_prev = prev.user + prev.nice + prev.system + prev.idle;
+    unsigned long total_cur = cur.user + cur.nice + cur.system + cur.idle;
+    unsigned long idle_diff = cur.idle - prev.idle;
+    unsigned long total_diff = total_cur - total_prev;
+
+    return 100.0 * (1.0 - static_cast<double>(idle_diff) / static_cast<double>(total_diff));
+}
+
+#endif
 
 Monitor::Monitor(QObject *parent) : QThread{parent} {
     //this->start(QThread::LowestPriority);
@@ -48,6 +88,7 @@ void Monitor::GetResource() {
 }
 
 std::optional<double> Monitor::GetMemUsage() {
+#if defined(WIN32) || defined(_MSC_VER) || defined(_WIN64)
     MEMORYSTATUSEX memsStat;
     memsStat.dwLength = sizeof(memsStat);
     if (!GlobalMemoryStatusEx(
@@ -59,9 +100,28 @@ std::optional<double> Monitor::GetMemUsage() {
     double nMemTotal = memsStat.ullTotalPhys >> 20;
     double nMemUsed = nMemTotal - nMemFree;
     return {round(nMemUsed / nMemTotal * 100)};
+#elif defined(__linux__) || defined(__linux) || defined (__gnu_linux__)
+    std::ifstream file("/proc/meminfo");
+    std::string key, value, unit;
+    unsigned long long mem_total = 0, mem_free = 0;
+
+    while (!file.eof()) {
+        file >> key >> value >> unit;
+        if(key == "MemTotal:")
+            mem_total = std::stoull(value);
+        if(key == "MemFree:")
+            mem_free = std::stoull(value);
+        if(mem_free > 0 && mem_total > 0)
+            break;
+
+    }
+
+    return { 100.0 - round(static_cast<double>(mem_free) / static_cast<double>(mem_total) * 100.0) };
+#endif
 }
 
 std::optional<double> Monitor::GetCpuUsage() {
+#if defined(WIN32) || defined(_MSC_VER) || defined(_WIN64)
     HANDLE hEvent;
     static FILETIME preIdleTime;
     static FILETIME preKernelTime;
@@ -83,6 +143,13 @@ std::optional<double> Monitor::GetCpuUsage() {
     long long user = CompareFileTime(preUserTime, userTime);
     double cpuRate = round(100.0 * (kernel + user - idle) / (kernel + user));
     return {cpuRate};
+#elif defined(__linux__) || defined(__linux) || defined (__gnu_linux__)
+    auto prev = GetFileTime();
+    QThread::msleep(100);
+    auto cur = GetFileTime();
+    // qDebug() << "cpu" << CalculateCpuUsage(prev, cur);
+    return { round(CalculateCpuUsage(prev, cur)) };
+#endif
 }
 
 std::optional<QMap<QString, unsigned long>> Monitor::GetdiskSpace() {
@@ -119,9 +186,10 @@ std::optional<QMap<QString, unsigned long>> Monitor::GetdiskSpace() {
         return std::nullopt;
     }
 #else
-    auto infoList = QStorageInfo::mountedVolumes();
-    for (const auto &info : std::as_const(infoList)) {
-        freeSpace[info.rootPath()] = info.bytesFree() >> 30;
+    for (const auto &info : QStorageInfo::mountedVolumes()) {
+        if (info.isValid() && info.isReady())
+            if (!info.isReadOnly())
+                freeSpace[info.rootPath()] = info.bytesFree() >> 30;
     }
     return {freeSpace};
 #endif

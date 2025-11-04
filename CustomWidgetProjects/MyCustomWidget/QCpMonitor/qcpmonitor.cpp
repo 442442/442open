@@ -28,12 +28,17 @@ QCpMonitor::QCpMonitor(QWidget *parent)
     mMonitorLabels.insert("Cpu", pCpuLabel);
     mMonitorLabels.insert("Mem", pMemLabel);
 
-    auto diskInfo = QStorageInfo::mountedVolumes();
-    for (const auto &info : diskInfo) {
-        QLabel *pDiskLabel = new QLabel(info.rootPath());
-        pDiskLabel->setFrameShape(QFrame::Box);
-        mMonitorLabels.insert(info.rootPath(), pDiskLabel);
-        pLayout->addWidget(pDiskLabel);
+    for (const auto &info : QStorageInfo::mountedVolumes()) {
+        if (info.isValid() && info.isReady())
+        {
+            if (!info.isReadOnly())
+            {
+                QLabel *pDiskLabel = new QLabel(info.rootPath());
+                pDiskLabel->setFrameShape(QFrame::Box);
+                mMonitorLabels.insert(info.rootPath(), pDiskLabel);
+                pLayout->addWidget(pDiskLabel);
+            }
+        }
     }
 
     for (const auto &plabel : std::as_const(mMonitorLabels)) {
