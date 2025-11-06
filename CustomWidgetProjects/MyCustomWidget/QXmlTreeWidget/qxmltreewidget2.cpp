@@ -1,5 +1,4 @@
 ﻿#include "qxmltreewidget2.h"
-#include "tinyxml2.h"
 
 #include "xmltreedelegate.h"
 #include "nodeattributesdlg.h"
@@ -21,9 +20,6 @@
 #define STRING_IS_ENABLE(str)                                                  \
 ((str) == "true" || (str) == "True" || (str) == "1" || (str) == "TRUE" ||    \
                                                                                  (str) == "ENABLE" || (str) == "enable" || (str) == "Enable")
-
-tinyxml2::XMLDocument xmlDocWrite2;
-
 const QString XML_COMMENT2 =
     u8"name显示文字;id唯一标识;valueType参数类型(int/float/double/string/enum/"
                              u8"path/"
@@ -63,66 +59,86 @@ QXmlTreeWidget2::QXmlTreeWidget2(QWidget *parent)
 
 QXmlTreeWidget2::~QXmlTreeWidget2() {}
 
-bool QXmlTreeWidget2::InitFromXmlConfig(const char *path) {
-    tinyxml2::XMLDocument xmlDocRead;
-    auto error = xmlDocRead.LoadFile(path);
-    if (error != tinyxml2::XMLError::XML_SUCCESS) {
-        emit XmlErrorOcurred(tinyxml2::XMLDocument::ErrorIDToName(error));
+bool QXmlTreeWidget2::InitFromXmlConfig(const QString& path) {
+    QFile file(path);
+    if (!file.exists())
+    {
+        emit XmlErrorOcurred(u8"xml文件不存在");
         return false;
     }
-    auto rootEle = xmlDocRead.RootElement();
-    if (!rootEle) {
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        emit XmlErrorOcurred(u8"xml文件打开失败");
         return false;
     }
+
+    mDoc.clear();
+    if (auto res = mDoc.setContent(&file); !res)
+    {
+        emit XmlErrorOcurred(res.errorMessage);
+        file.close();
+        return false;
+    }
+    file.close();
+
+    auto rootEle = mDoc.documentElement();
+    if (rootEle.isNull())
+    {
+        emit XmlErrorOcurred(u8"找不到根节点");
+        return false;
+    }
+
     InitXml(rootEle, nullptr);
     return true;
 }
 
-bool QXmlTreeWidget2::InitFromXmlStr(const char *xml) {
-    tinyxml2::XMLDocument xmlDocRead;
-    auto error = xmlDocRead.Parse(xml);
-    if (error != tinyxml2::XMLError::XML_SUCCESS) {
-        emit XmlErrorOcurred(tinyxml2::XMLDocument::ErrorIDToName(error));
+bool QXmlTreeWidget2::InitFromXmlStr(QAnyStringView xml) {
+    mDoc.clear();
+    if (auto res = mDoc.setContent(xml); !res)
+    {
+        emit XmlErrorOcurred(res.errorMessage);
         return false;
     }
-    auto rootEle = xmlDocRead.RootElement();
-    if (!rootEle) {
+    auto rootEle = mDoc.documentElement();
+    if (rootEle.isNull())
+    {
+        emit XmlErrorOcurred(u8"找不到根节点");
         return false;
     }
+
     InitXml(rootEle, nullptr);
     return true;
 }
 
-bool QXmlTreeWidget2::SaveXmlConfig(const char *path) {
-    xmlDocWrite2.Clear();
-    tinyxml2::XMLDeclaration *xmlDeclare = xmlDocWrite2.NewDeclaration();
-    xmlDocWrite2.InsertEndChild(xmlDeclare);
+bool QXmlTreeWidget2::SaveXmlConfig(const QString& path) {
+    QFile file(path);
+    if (!file.open(QIODevice::ReadWrite | QIODevice::Truncate | QIODevice::Text))
+    {
+        emit XmlErrorOcurred(u8"保存失败，无法创建配置文件");
+        return false;
+    }
+    mDoc.clear();
 
-    tinyxml2::XMLComment *xmlComment =
-        xmlDocWrite2.NewComment(XML_COMMENT2.toStdString().c_str());
-    xmlDocWrite2.InsertEndChild(xmlComment);
+    auto instruction = mDoc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\"");
+    mDoc.appendChild(instruction);
 
-    tinyxml2::XMLElement *root = xmlDocWrite2.NewElement("Root");
-    xmlDocWrite2.InsertEndChild(root);
+    auto xmlComment = mDoc.createComment(XML_COMMENT2);
+    mDoc.appendChild(xmlComment);
+
+    auto root = mDoc.createElement("Root");
+    mDoc.appendChild(root);
 
     for (int i = 0; i < this->topLevelItemCount(); i++) {
         QTreeWidgetItem *item = this->topLevelItem(i);
         SaveXmlConfig(root, item);
     }
-#ifdef _DEBUG
-    // 字符串预览
-    tinyxml2::XMLPrinter printer;
-    xmlDocWrite2.Accept(&printer);
-    QString xmlstr = printer.CStr();
-    qDebug() << xmlstr;
-#endif
-    auto ret = xmlDocWrite2.SaveFile(path);
-    if (ret != tinyxml2::XMLError::XML_SUCCESS) {
-        emit XmlErrorOcurred(tinyxml2::XMLDocument::ErrorIDToName(ret));
-        return false;
-    } else {
-        return true;
-    }
+
+    QTextStream out(&file);
+    mDoc.save(out, 4);
+
+    file.close();
+
+    return true;
 }
 
 void QXmlTreeWidget2::ClearTree() {
@@ -153,24 +169,24 @@ void QXmlTreeWidget2::SetNodeValue(const QString &id, const QString &value) {
     }
 }
 
-void QXmlTreeWidget2::InitXml(tinyxml2::XMLElement *element,
+void QXmlTreeWidget2::InitXml(const QDomElement& element,
                               QTreeWidgetItem *parent) {
-    tinyxml2::XMLElement *node = element->FirstChildElement();
-    while (node) {
+    auto node = element.firstChildElement();
+    while (!node.isNull()) {
         QTreeWidgetItem *item = new QTreeWidgetItem();
         item->setFlags(item->flags() | Qt::ItemFlag::ItemIsEditable);
-        item->setText(0, node->Attribute("name"));
-        item->setText(1, node->Attribute("value"));
+        item->setText(0, node.attribute("name"));
+        item->setText(1, node.attribute("value"));
 
-        QString checkable{node->Attribute("checkable")};
-        QString checked{node->Attribute("checked")};
-        QString enable{node->Attribute("enable")};
+        QString checkable{node.attribute("checkable")};
+        QString checked{node.attribute("checked")};
+        QString enable{node.attribute("enable")};
 
-        NodeData data(node->Attribute("id"), node->Attribute("valueType"),
-                      node->Attribute("valueRange"), checkable,
+        NodeData data(node.attribute("id"), node.attribute("valueType"),
+                      node.attribute("valueRange"), checkable,
                       STRING_IS_ENABLE(enable));
         item->setData(1, Qt::UserRole + 1, QVariant::fromValue(data));
-        mNodeMap[node->Attribute("id")] = item;
+        mNodeMap[node.attribute("id")] = item;
 
         if (parent) {
             parent->addChild(item);
@@ -209,11 +225,11 @@ void QXmlTreeWidget2::InitXml(tinyxml2::XMLElement *element,
 
         InitXml(node, item);
 
-        node = node->NextSiblingElement();
+        node = node.nextSiblingElement();
     }
 }
 
-void QXmlTreeWidget2::SaveXmlConfig(tinyxml2::XMLElement *element,
+void QXmlTreeWidget2::SaveXmlConfig(QDomElement& element,
                                     QTreeWidgetItem *parent) {
     int countChild = parent->childCount();
 
@@ -221,21 +237,21 @@ void QXmlTreeWidget2::SaveXmlConfig(tinyxml2::XMLElement *element,
     QString value = parent->text(1);
     auto data = parent->data(1, Qt::UserRole + 1).value<NodeData>();
 
-    tinyxml2::XMLElement *node = xmlDocWrite2.NewElement("Param");
-    node->SetAttribute("name", name.toStdString().c_str());
-    node->SetAttribute("id", data._id.toStdString().c_str());
-    node->SetAttribute("valueType", data._valueType.toStdString().c_str());
-    node->SetAttribute("value", value.toStdString().c_str());
-    node->SetAttribute("valueRange", data._valueRange.toStdString().c_str());
-    node->SetAttribute("checkable", data._checkable.toStdString().c_str());
-    node->SetAttribute("checked",
+    auto node = mDoc.createElement("Param");
+    node.setAttribute("name", name);
+    node.setAttribute("id", data._id);
+    node.setAttribute("valueType", data._valueType);
+    node.setAttribute("value", value);
+    node.setAttribute("valueRange", data._valueRange);
+    node.setAttribute("checkable", data._checkable);
+    node.setAttribute("checked",
                        QString::number(parent->checkState(0) != Qt::Unchecked)
                            .toStdString()
                            .c_str());
-    node->SetAttribute("enable",
+    node.setAttribute("enable",
                        QString::number(data._enable).toStdString().c_str());
 
-    element->InsertEndChild(node);
+    element.appendChild(node);
 
     for (int i = 0; i < countChild; i++) {
         QTreeWidgetItem *childItem = parent->child(i);

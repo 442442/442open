@@ -17,7 +17,7 @@ endif()
 #------------------------------------------------------
 
 find_package(QT NAMES Qt6 REQUIRED Designer)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Designer)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Designer Xml)
 message(STATUS ${NAME} " build with Qt" ${QT_VERSION_MAJOR})
 
 set(CMAKE_AUTOMOC ON)
@@ -85,7 +85,6 @@ set_property(TARGET ${NAME} PROPERTY DEBUG_POSTFIX d)
 if(USE_HALCON)
     include_directories(${CMAKE_SOURCE_DIR}/include/halcon)
 endif()
-include_directories(${CMAKE_SOURCE_DIR}/include/tinyxml)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 #------------------------------------------------------
@@ -100,13 +99,10 @@ target_link_directories(${NAME} PRIVATE ${CMAKE_SOURCE_DIR}/bin)
 if(USE_HALCON)
     target_link_libraries(${NAME} PRIVATE halconcpp)
 endif()
-target_link_libraries(${NAME} PRIVATE
-    debug tinyxml2d
-    optimized tinyxml2
-)
 
 target_link_libraries(${NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::Designer
+    Qt${QT_VERSION_MAJOR}::Xml
 )
 
 #------------------------------------------------------
@@ -190,7 +186,7 @@ file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${OUTPUT_PATH}/../include)
 
 endif()
 
-file(GLOB MY_PUBLIC_HEADERS QXmlTreeWidget/qxmltreewidget2.h QXmlTreeWidget/qxmltreewidget.h)
+file(GLOB MY_PUBLIC_HEADERS QXmlTreeWidget/qxmltreewidget2.h)
 file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${OUTPUT_PATH}/../include/QXmlTreeWidget)
 
 file(GLOB MY_PUBLIC_HEADERS QZoomGraphicItems/*.h)

@@ -4,8 +4,7 @@
 #include <QTreeWidget>
 #include <QVariant>
 #include <QtUiPlugin/QDesignerExportWidget>
-
-namespace  tinyxml2{class XMLElement;}
+#include <QDomDocument>
 
 class QDESIGNER_WIDGET_EXPORT QXmlTreeWidget2 : public QTreeWidget
 {
@@ -38,19 +37,19 @@ public:
     /// </summary>
     /// <param name = "path">xml文件路径</param>
     /// <returns>成功/失败</returns>
-    bool InitFromXmlConfig(const char* path);
+    bool InitFromXmlConfig(const QString& path);
     /// <summary>
     /// 初始化树
     /// </summary>
     /// <param name = "xml">xml字符串</param>
     /// <returns>成功/失败</returns>
-    bool InitFromXmlStr(const char* xml);
+    bool InitFromXmlStr(QAnyStringView xml);
     /// <summary>
     /// 保存配置
     /// </summary>
     /// <param name = "path">xml文件路径</param>
     /// <returns>成功/失败</returns>
-    bool SaveXmlConfig(const char* path);
+    bool SaveXmlConfig(const QString& path);
     /// <summary>
     /// 清除所有节点
     /// </summary>
@@ -109,15 +108,15 @@ private:
     /// <param name="element">xml元素</param>
     /// <param name="parent">父节点</param>
     /// <param name="level">层级</param>
-    void InitXml(tinyxml2::XMLElement* element, QTreeWidgetItem* parent);
+    void InitXml(const QDomElement& element, QTreeWidgetItem* parent);
     /// <summary>
     /// 私有重载，迭代保存树
     /// </summary>
     /// <param name="element">xml元素</param>
     /// <param name="parent">父节点</param>
-    void SaveXmlConfig(tinyxml2::XMLElement* element, QTreeWidgetItem* parent);
+    void SaveXmlConfig(QDomElement& element, QTreeWidgetItem* parent);
 
-
+    QDomDocument mDoc;
     QMap<QString, QTreeWidgetItem*> mNodeMap;//id，节点
     QTreeWidgetItem* mDoubleClickedItem{ nullptr };
     QTreeWidgetItem* mRightClickedItem{ nullptr };

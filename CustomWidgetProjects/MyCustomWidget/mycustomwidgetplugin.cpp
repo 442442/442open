@@ -168,29 +168,6 @@ QWidget *QFileEditPlugin::createWidget(QWidget *parent)
     return new QFileEdit(parent);
 }
 
-QXmlTreeWidgetPlugin::QXmlTreeWidgetPlugin(QObject* parent):QObject(parent)
-{
-    m_name = QLatin1String("QXmlTreeWidget");
-    m_include=QLatin1String("QXmlTreeWidget/qxmltreewidget.h");
-    m_toolTip=QString(u8"xml树(算法参数树)");
-    m_domXml="<widget class=\"QXmlTreeWidget\" name=\"qXmlTreeWidget\">\n"
-            " <property name=\"geometry\">\n"
-            "  <rect>\n"
-            "   <x>0</x>\n"
-            "   <y>0</y>\n"
-            "   <width>256</width>\n"
-            "   <height>192</height>\n"
-            "  </rect>\n"
-            " </property>\n"
-            "</widget>\n";
-    m_icon = QIcon("://icon/xmltreeicon.png");
-}
-
-QWidget* QXmlTreeWidgetPlugin::createWidget(QWidget* parent)
-{
-    return new QXmlTreeWidget(parent);
-}
-
 QXmlTreeWidget2Plugin::QXmlTreeWidget2Plugin(QObject* parent):QObject(parent)
 {
     m_name = QLatin1String("QXmlTreeWidget2");

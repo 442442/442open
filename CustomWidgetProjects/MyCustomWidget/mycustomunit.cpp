@@ -14,7 +14,6 @@ MyCustomUnit::MyCustomUnit(QObject *parent)
     m_widgets.append(new QHalconDisplayMiniPlugin(this));
     m_widgets.append(new QHalconMiniHudPlugin(this));
 #endif
-    m_widgets.append(new QXmlTreeWidgetPlugin(this));
     m_widgets.append(new QXmlTreeWidget2Plugin(this));
     m_widgets.append(new QDragTreeWidgetPlugin(this));
     m_widgets.append(new QZoomGraphicViewPlugin(this));

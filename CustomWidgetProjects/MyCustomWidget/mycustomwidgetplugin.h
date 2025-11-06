@@ -95,15 +95,6 @@ public:
     virtual QWidget *createWidget(QWidget* parent) override;
 };
 
-class QXmlTreeWidgetPlugin : public QObject, public MyCustomWidgetPlugin
-{
-    Q_OBJECT
-    Q_INTERFACES(QDesignerCustomWidgetInterface)
-public:
-    QXmlTreeWidgetPlugin(QObject* parent = Q_NULLPTR);
-    virtual QWidget* createWidget(QWidget* parent) override;
-};
-
 class QXmlTreeWidget2Plugin : public QObject, public MyCustomWidgetPlugin
 {
     Q_OBJECT

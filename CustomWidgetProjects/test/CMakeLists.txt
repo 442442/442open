@@ -21,7 +21,7 @@ endif()
 #------------------------------------------------------
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED Core Gui Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets Xml)
 message(STATUS ${NAME} " build with Qt" ${QT_VERSION_MAJOR})
 
 set(CMAKE_AUTOMOC ON)
@@ -61,7 +61,6 @@ set_property(TARGET ${NAME} PROPERTY DEBUG_POSTFIX d)
 if(USE_HALCON)
 include_directories(${CMAKE_SOURCE_DIR}/include/halcon)
 endif()
-include_directories(${CMAKE_SOURCE_DIR}/include/tinyxml)
 include_directories(${CMAKE_SOURCE_DIR}/MyCustomWidget)
 
 #------------------------------------------------------
@@ -76,7 +75,7 @@ target_link_directories(${NAME} PRIVATE ${OUTPUT_PATH})
 if(USE_HALCON)
     target_link_libraries(${NAME} PRIVATE halconcpp)
 endif()
-target_link_libraries(${NAME} PRIVATE tinyxml2)
+
 target_link_libraries(${NAME} PRIVATE
     debug MyCustomWidgetd
     optimized MyCustomWidget)
@@ -90,6 +89,7 @@ target_link_libraries(${NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Gui
     Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Xml
 )
 
 #------------------------------------------------------
