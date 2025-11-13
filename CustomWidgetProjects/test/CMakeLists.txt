@@ -47,7 +47,7 @@ add_executable(${NAME}
     mainwindow.ui
     mainwindow.cpp mainwindow.h
     main.cpp
-    windoweffect.cpp windoweffect.h
+    # windoweffect.cpp windoweffect.h
 )
 
 set_property(TARGET ${NAME} PROPERTY DEBUG_POSTFIX d)

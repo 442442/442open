@@ -154,45 +154,18 @@ std::optional<double> Monitor::GetCpuUsage() {
 
 std::optional<QMap<QString, unsigned long>> Monitor::GetdiskSpace() {
     QMap<QString, unsigned long> freeSpace;
-#if 0
-    DWORD dwSize = MAX_PATH;
-    TCHAR szLogicalDrives[MAX_PATH] = {0};
-    DWORD dwResult = GetLogicalDriveStrings(dwSize, szLogicalDrives);
-
-    if (dwResult > 0 && dwResult <= MAX_PATH) {
-        TCHAR *szSingleDrive = szLogicalDrives;
-
-        while (*szSingleDrive) {
-            uint64_t available, total, free;
-            if (GetDiskFreeSpaceEx(szSingleDrive, (ULARGE_INTEGER *)&available,
-                                   (ULARGE_INTEGER *)&total,
-                                   (ULARGE_INTEGER *)&free)) {
-                uint64_t /*Total, Available,*/ Free;
-                // Total = total >> 20;
-                // Available = available >> 20;
-                Free = free >> 30;
-
-                // all_Total += Total;   //总
-                // all_Free += Free;   //剩余
-                freeSpace[*szSingleDrive] = Free;
-            }
-            // 获取下一个驱动器号起始地址
-            szSingleDrive += _tcslen(szSingleDrive) + 1;
-        }
-        return {freeSpace};
-    }
-    else
-    {
-        return std::nullopt;
-    }
-#else
     for (const auto &info : QStorageInfo::mountedVolumes()) {
         if (info.isValid() && info.isReady())
             if (!info.isReadOnly())
+#if defined(WIN32) || defined(_MSC_VER) || defined(_WIN64)
                 freeSpace[info.rootPath()] = info.bytesFree() >> 30;
+#elif defined(__linux__) || defined(__linux) || defined (__gnu_linux__)
+                if (info.device() != "tmpfs")
+                    freeSpace[info.device()] = info.bytesFree() >> 30;
+#endif
     }
     return {freeSpace};
-#endif
+
 }
 
 void Monitor::run() {

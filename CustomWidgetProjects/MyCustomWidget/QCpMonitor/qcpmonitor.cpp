@@ -33,9 +33,15 @@ QCpMonitor::QCpMonitor(QWidget *parent)
         {
             if (!info.isReadOnly())
             {
-                QLabel *pDiskLabel = new QLabel(info.rootPath());
+#if defined(WIN32) || defined(_MSC_VER) || defined(_WIN64)
+                QString key = info.rootPath();
+#elif defined(__linux__) || defined(__linux) || defined (__gnu_linux__)
+                QString key = info.device();
+                if (key == "tmpfs") continue;
+#endif
+                QLabel *pDiskLabel = new QLabel(key);
                 pDiskLabel->setFrameShape(QFrame::Box);
-                mMonitorLabels.insert(info.rootPath(), pDiskLabel);
+                mMonitorLabels.insert(key, pDiskLabel);
                 pLayout->addWidget(pDiskLabel);
             }
         }

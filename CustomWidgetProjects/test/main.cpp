@@ -1,5 +1,5 @@
 ﻿#include "mainwindow.h"
-#include "windoweffect.h"
+// #include "windoweffect.h"
 #include <QApplication>
 #include <QRandomGenerator>
 #include <QTimer>
@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
     //推荐亚克力窗口
 
     //毛玻璃窗口(Areo)
-    WindowEffect::setAreoEffect((HWND)w2.winId());
+    // WindowEffect::setAreoEffect((HWND)w2.winId());
 
     //带颜色的毛玻璃窗口(非Qt事件绘制)
     //透明度值较高时效果和亚克力类似;
