@@ -7,6 +7,8 @@ class XmlTreeDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 public:
+    XmlTreeDelegate(QObject *parent = nullptr) : QStyledItemDelegate(parent) {}
+
     void paint(QPainter *painter, const QStyleOptionViewItem &option,
                const QModelIndex &index) const override;
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,

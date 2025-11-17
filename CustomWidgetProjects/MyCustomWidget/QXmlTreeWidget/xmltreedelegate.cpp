@@ -37,6 +37,7 @@ QWidget *XmlTreeDelegate::createEditor(QWidget *parent,
             return editor;
         } else if (nodeData._valueType == "string") {
             QLineEdit *editor = new QLineEdit(parent);
+            editor->setObjectName("strEdit");
             connect(editor, &QLineEdit::editingFinished, this,
                     &XmlTreeDelegate::commitAndCloseEditor);
             return editor;
@@ -97,35 +98,39 @@ void XmlTreeDelegate::setEditorData(QWidget *editor,
 void XmlTreeDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
                                    const QModelIndex &index) const {
     if (index.data(Qt::UserRole + 1).canConvert<QXmlTreeWidget2::NodeData>()) {
+        model->blockSignals(true);
         auto nodeData =
             index.data(Qt::UserRole + 1).value<QXmlTreeWidget2::NodeData>();
         if (nodeData._valueType == "int") {
             QSpinBox *peditor = qobject_cast<QSpinBox *>(editor);
-            model->setData(index, QString::number(peditor->value()),Qt::DisplayRole);
+            model->setData(index, QString::number(peditor->value()),Qt::EditRole);
         } else if (nodeData._valueType == "float" ||
                    nodeData._valueType == "double") {
             QDoubleSpinBox *peditor = qobject_cast<QDoubleSpinBox *>(editor);
-            model->setData(index, QString::number(peditor->value()),Qt::DisplayRole);
+            model->setData(index, QString::number(peditor->value()),Qt::EditRole);
         } else if (nodeData._valueType == "string") {
             QLineEdit *peditor = qobject_cast<QLineEdit *>(editor);
-            model->setData(index, peditor->text(),Qt::DisplayRole);
+            model->setData(index, peditor->text(),Qt::EditRole);
         } else if (nodeData._valueType == "enum") {
             QComboBox *peditor = qobject_cast<QComboBox *>(editor);
-            model->setData(index, peditor->currentText(),Qt::DisplayRole);
+            model->setData(index, peditor->currentText(),Qt::EditRole);
         } else if (nodeData._valueType == "path") {
             QPathEdit *peditor = qobject_cast<QPathEdit *>(editor);
-            model->setData(index, peditor->text(),Qt::DisplayRole);
+            model->setData(index, peditor->text(),Qt::EditRole);
         } else if (nodeData._valueType == "file") {
             QFileEdit *peditor = qobject_cast<QFileEdit *>(editor);
-            model->setData(index, peditor->text(),Qt::DisplayRole);
+            model->setData(index, peditor->text(),Qt::EditRole);
         }
+        model->blockSignals(false);
     } else {
-        QStyledItemDelegate::setEditorData(editor, index);
+        QStyledItemDelegate::setModelData(editor, model, index);
     }
 }
 
 void XmlTreeDelegate::commitAndCloseEditor() {
-    QWidget *editor = qobject_cast<QWidget *>(sender());
-    emit commitData(editor);
-    emit closeEditor(editor);
+    if (QWidget *editor = qobject_cast<QWidget *>(sender())) {
+        if(!editor->isVisible()) return;
+        emit commitData(editor);
+        emit closeEditor(editor, QAbstractItemDelegate::EndEditHint::SubmitModelCache);
+    }
 }

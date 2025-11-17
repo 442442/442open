@@ -37,7 +37,7 @@ QXmlTreeWidget2::QXmlTreeWidget2(QWidget *parent)
     this->setColumnCount(2);
     this->setHeaderLabels(QStringList() << u8"名称" << u8"数据");
     this->setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
-    this->setItemDelegate(new XmlTreeDelegate);
+    this->setItemDelegate(new XmlTreeDelegate(this));
     this->setEditTriggers(QAbstractItemView::DoubleClicked |
                           QAbstractItemView::SelectedClicked);
 
