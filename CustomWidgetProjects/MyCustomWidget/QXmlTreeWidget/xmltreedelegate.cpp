@@ -5,6 +5,9 @@
 #include <QLineEdit>
 #include <QSpinBox>
 
+#define CREATE_EDITOR(ClassName) ClassName *editor = new ClassName(parent);\
+connect(editor, &ClassName::editingFinished, this, &XmlTreeDelegate::commitAndCloseEditor);
+
 void XmlTreeDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     QStyledItemDelegate::paint(painter, option, index);
@@ -13,13 +16,12 @@ void XmlTreeDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
 QWidget *XmlTreeDelegate::createEditor(QWidget *parent,
                                        const QStyleOptionViewItem &option,
                                        const QModelIndex &index) const {
+    Q_UNUSED(option);
     if (index.data(Qt::UserRole + 1).canConvert<QXmlTreeWidget2::NodeData>()) {
         auto nodeData =
             index.data(Qt::UserRole + 1).value<QXmlTreeWidget2::NodeData>();
         if (nodeData._valueType == "int") {
-            QSpinBox *editor = new QSpinBox(parent);
-            connect(editor, &QSpinBox::editingFinished, this,
-                    &XmlTreeDelegate::commitAndCloseEditor);
+            CREATE_EDITOR(QSpinBox);
             auto range = nodeData._valueRange.split(",");
             if (range.size() != 2)
                 return editor;
@@ -27,19 +29,14 @@ QWidget *XmlTreeDelegate::createEditor(QWidget *parent,
             return editor;
         } else if (nodeData._valueType == "float" ||
                    nodeData._valueType == "double") {
-            QDoubleSpinBox *editor = new QDoubleSpinBox(parent);
-            connect(editor, &QSpinBox::editingFinished, this,
-                    &XmlTreeDelegate::commitAndCloseEditor);
+            CREATE_EDITOR(QDoubleSpinBox);
             auto range = nodeData._valueRange.split(",");
             if (range.size() != 2)
                 return editor;
             editor->setRange(range.at(0).toDouble(), range.at(1).toDouble());
             return editor;
         } else if (nodeData._valueType == "string") {
-            QLineEdit *editor = new QLineEdit(parent);
-            editor->setObjectName("strEdit");
-            connect(editor, &QLineEdit::editingFinished, this,
-                    &XmlTreeDelegate::commitAndCloseEditor);
+            CREATE_EDITOR(QLineEdit);
             return editor;
         } else if (nodeData._valueType == "enum") {
             QComboBox *editor = new QComboBox(parent);
@@ -49,14 +46,10 @@ QWidget *XmlTreeDelegate::createEditor(QWidget *parent,
                     &XmlTreeDelegate::commitAndCloseEditor);
             return editor;
         } else if (nodeData._valueType == "path") {
-            QPathEdit *editor = new QPathEdit(parent);
-            connect(editor, &QPathEdit::editingFinished, this,
-                    &XmlTreeDelegate::commitAndCloseEditor);
+            CREATE_EDITOR(QPathEdit);
             return editor;
         } else if (nodeData._valueType == "file") {
-            QFileEdit *editor = new QFileEdit(parent);
-            connect(editor, &QFileEdit::editingFinished, this,
-                    &XmlTreeDelegate::commitAndCloseEditor);
+            CREATE_EDITOR(QFileEdit);
             return editor;
         }
     }
