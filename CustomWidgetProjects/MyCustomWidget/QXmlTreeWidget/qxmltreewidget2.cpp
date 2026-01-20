@@ -10,6 +10,7 @@
 #include <QHeaderView>
 #include <QMenu>
 #include <QUrl>
+#include <QDomDocument>
 
 #ifdef _DEBUG
 #include <QDebug>
@@ -25,12 +26,115 @@ const QString XML_COMMENT2 =
                              u8"path/"
                              u8"file);valueRange值域(逗号分割);checkable可勾选;checked勾选;enable使能;";
 
+class QXmlTreeWidget2Private
+{
+public:
+    QXmlTreeWidget2Private(QXmlTreeWidget2* parent):mParent(parent){}
+
+    void InitXml(const QDomElement& element, QTreeWidgetItem* parent)
+    {
+        auto node = element.firstChildElement();
+        while (!node.isNull()) {
+            QTreeWidgetItem *item = new QTreeWidgetItem();
+            item->setFlags(item->flags() | Qt::ItemFlag::ItemIsEditable);
+            item->setText(0, node.attribute("name"));
+            item->setText(1, node.attribute("value"));
+
+            QString checkable{node.attribute("checkable")};
+            QString checked{node.attribute("checked")};
+            QString enable{node.attribute("enable")};
+
+            QXmlTreeWidget2::NodeData data(node.attribute("id"), node.attribute("valueType"),
+                          node.attribute("valueRange"), checkable,
+                          STRING_IS_ENABLE(enable));
+            item->setData(1, Qt::UserRole + 1, QVariant::fromValue(data));
+            mParent->mNodeMap[node.attribute("id")] = item;
+
+            if (parent) {
+                parent->addChild(item);
+                if (STRING_IS_TRUE(checkable)) {
+                    if (STRING_IS_TRUE(checked) &&
+                        ((parent->flags() & Qt::ItemFlag::ItemIsUserCheckable)
+                             ? (parent->checkState(0) == Qt::CheckState::Checked)
+                             : true)) {
+                        item->setCheckState(0, Qt::CheckState::Checked);
+                    } else {
+                        item->setCheckState(0, Qt::CheckState::Unchecked);
+                    }
+                } else {
+                    item->setFlags(item->flags() & ~Qt::ItemFlag::ItemIsUserCheckable);
+                }
+                if (!STRING_IS_ENABLE(enable) || parent->isDisabled() ||
+                    (parent->checkState(0) == Qt::CheckState::Unchecked &&
+                     (parent->flags() & Qt::ItemFlag::ItemIsUserCheckable))) {
+                    item->setDisabled(true);
+                }
+            } else {
+                mParent->addTopLevelItem(item);
+                if (STRING_IS_TRUE(checkable)) {
+                    if (STRING_IS_TRUE(checked)) {
+                        item->setCheckState(0, Qt::CheckState::Checked);
+                    } else {
+                        item->setCheckState(0, Qt::CheckState::Unchecked);
+                    }
+                } else {
+                    item->setFlags(item->flags() & ~Qt::ItemFlag::ItemIsUserCheckable);
+                }
+                if (!STRING_IS_ENABLE(enable))
+                    item->setDisabled(true);
+            }
+            item->setExpanded(true);
+
+            InitXml(node, item);
+
+            node = node.nextSiblingElement();
+        }
+    }
+
+    void SaveXmlConfig(QDomElement& element, QTreeWidgetItem* parent)
+    {
+        int countChild = parent->childCount();
+
+        QString name = parent->text(0);
+        QString value = parent->text(1);
+        auto data = parent->data(1, Qt::UserRole + 1).value<QXmlTreeWidget2::NodeData>();
+
+        auto node = mParent->mDoc->createElement("Param");
+        node.setAttribute("name", name);
+        node.setAttribute("id", data._id);
+        node.setAttribute("valueType", data._valueType);
+        node.setAttribute("value", value);
+        node.setAttribute("valueRange", data._valueRange);
+        node.setAttribute("checkable", data._checkable);
+        node.setAttribute("checked",
+                          QString::number(parent->checkState(0) != Qt::Unchecked)
+                              .toStdString()
+                              .c_str());
+        node.setAttribute("enable",
+                          QString::number(data._enable).toStdString().c_str());
+
+        element.appendChild(node);
+
+        for (int i = 0; i < countChild; i++) {
+            QTreeWidgetItem *childItem = parent->child(i);
+            SaveXmlConfig(node, childItem);
+        }
+    }
+
+private:
+    QXmlTreeWidget2* mParent;
+};
+
+
 QXmlTreeWidget2::QXmlTreeWidget2(QWidget *parent)
-    : QTreeWidget(parent), mpMenu(new QMenu(this)),
+    : QTreeWidget(parent),mpPrivate(new QXmlTreeWidget2Private(this)),
+    mDoc(new QDomDocument()),
+    mpMenu(new QMenu(this)),
     mpOpenAction(new QAction(u8"打开路径", this)),
     mpCopyAction(new QAction(u8"复制文本", this)),
     mpAddAction(new QAction(u8"添加子节点", this)),
-    mpDelAction(new QAction(u8"删除节点", this)) {
+    mpDelAction(new QAction(u8"删除节点", this))
+{
     this->setAlternatingRowColors(true);
     this->header()->setSectionResizeMode(QHeaderView::Stretch);
     this->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
@@ -57,7 +161,11 @@ QXmlTreeWidget2::QXmlTreeWidget2(QWidget *parent)
             &QXmlTreeWidget2::SlotOnDelAction);
 }
 
-QXmlTreeWidget2::~QXmlTreeWidget2() {}
+QXmlTreeWidget2::~QXmlTreeWidget2()
+{
+    delete mDoc;
+    delete mpPrivate;
+}
 
 bool QXmlTreeWidget2::InitFromXmlConfig(const QString& path) {
     QFile file(path);
@@ -72,8 +180,8 @@ bool QXmlTreeWidget2::InitFromXmlConfig(const QString& path) {
         return false;
     }
 
-    mDoc.clear();
-    if (auto res = mDoc.setContent(&file); !res)
+    mDoc->clear();
+    if (auto res = mDoc->setContent(&file); !res)
     {
         emit XmlErrorOcurred(res.errorMessage);
         file.close();
@@ -81,32 +189,32 @@ bool QXmlTreeWidget2::InitFromXmlConfig(const QString& path) {
     }
     file.close();
 
-    auto rootEle = mDoc.documentElement();
+    auto rootEle = mDoc->documentElement();
     if (rootEle.isNull())
     {
         emit XmlErrorOcurred(u8"找不到根节点");
         return false;
     }
 
-    InitXml(rootEle, nullptr);
+    mpPrivate->InitXml(rootEle, nullptr);
     return true;
 }
 
 bool QXmlTreeWidget2::InitFromXmlStr(QAnyStringView xml) {
-    mDoc.clear();
-    if (auto res = mDoc.setContent(xml); !res)
+    mDoc->clear();
+    if (auto res = mDoc->setContent(xml); !res)
     {
         emit XmlErrorOcurred(res.errorMessage);
         return false;
     }
-    auto rootEle = mDoc.documentElement();
+    auto rootEle = mDoc->documentElement();
     if (rootEle.isNull())
     {
         emit XmlErrorOcurred(u8"找不到根节点");
         return false;
     }
 
-    InitXml(rootEle, nullptr);
+    mpPrivate->InitXml(rootEle, nullptr);
     return true;
 }
 
@@ -117,24 +225,24 @@ bool QXmlTreeWidget2::SaveXmlConfig(const QString& path) {
         emit XmlErrorOcurred(u8"保存失败，无法创建配置文件");
         return false;
     }
-    mDoc.clear();
+    mDoc->clear();
 
-    auto instruction = mDoc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\"");
-    mDoc.appendChild(instruction);
+    auto instruction = mDoc->createProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\"");
+    mDoc->appendChild(instruction);
 
-    auto xmlComment = mDoc.createComment(XML_COMMENT2);
-    mDoc.appendChild(xmlComment);
+    auto xmlComment = mDoc->createComment(XML_COMMENT2);
+    mDoc->appendChild(xmlComment);
 
-    auto root = mDoc.createElement("Root");
-    mDoc.appendChild(root);
+    auto root = mDoc->createElement("Root");
+    mDoc->appendChild(root);
 
     for (int i = 0; i < this->topLevelItemCount(); i++) {
         QTreeWidgetItem *item = this->topLevelItem(i);
-        SaveXmlConfig(root, item);
+        mpPrivate->SaveXmlConfig(root, item);
     }
 
     QTextStream out(&file);
-    mDoc.save(out, 4);
+    mDoc->save(out, 4);
 
     file.close();
 
@@ -166,96 +274,6 @@ void QXmlTreeWidget2::SetNodeValue(const QString &id, const QString &value) {
                                 STRING_IS_TRUE(value) ? Qt::Checked : Qt::Unchecked);
         else
             item->setText(1, value);
-    }
-}
-
-void QXmlTreeWidget2::InitXml(const QDomElement& element,
-                              QTreeWidgetItem *parent) {
-    auto node = element.firstChildElement();
-    while (!node.isNull()) {
-        QTreeWidgetItem *item = new QTreeWidgetItem();
-        item->setFlags(item->flags() | Qt::ItemFlag::ItemIsEditable);
-        item->setText(0, node.attribute("name"));
-        item->setText(1, node.attribute("value"));
-
-        QString checkable{node.attribute("checkable")};
-        QString checked{node.attribute("checked")};
-        QString enable{node.attribute("enable")};
-
-        NodeData data(node.attribute("id"), node.attribute("valueType"),
-                      node.attribute("valueRange"), checkable,
-                      STRING_IS_ENABLE(enable));
-        item->setData(1, Qt::UserRole + 1, QVariant::fromValue(data));
-        mNodeMap[node.attribute("id")] = item;
-
-        if (parent) {
-            parent->addChild(item);
-            if (STRING_IS_TRUE(checkable)) {
-                if (STRING_IS_TRUE(checked) &&
-                    ((parent->flags() & Qt::ItemFlag::ItemIsUserCheckable)
-                                                    ? (parent->checkState(0) == Qt::CheckState::Checked)
-                                                                                                      : true)) {
-                    item->setCheckState(0, Qt::CheckState::Checked);
-                } else {
-                    item->setCheckState(0, Qt::CheckState::Unchecked);
-                }
-            } else {
-                item->setFlags(item->flags() & ~Qt::ItemFlag::ItemIsUserCheckable);
-            }
-            if (!STRING_IS_ENABLE(enable) || parent->isDisabled() ||
-                (parent->checkState(0) == Qt::CheckState::Unchecked &&
-                                                                      (parent->flags() & Qt::ItemFlag::ItemIsUserCheckable))) {
-                item->setDisabled(true);
-            }
-        } else {
-            this->addTopLevelItem(item);
-            if (STRING_IS_TRUE(checkable)) {
-                if (STRING_IS_TRUE(checked)) {
-                    item->setCheckState(0, Qt::CheckState::Checked);
-                } else {
-                    item->setCheckState(0, Qt::CheckState::Unchecked);
-                }
-            } else {
-                item->setFlags(item->flags() & ~Qt::ItemFlag::ItemIsUserCheckable);
-            }
-            if (!STRING_IS_ENABLE(enable))
-                item->setDisabled(true);
-        }
-        item->setExpanded(true);
-
-        InitXml(node, item);
-
-        node = node.nextSiblingElement();
-    }
-}
-
-void QXmlTreeWidget2::SaveXmlConfig(QDomElement& element,
-                                    QTreeWidgetItem *parent) {
-    int countChild = parent->childCount();
-
-    QString name = parent->text(0);
-    QString value = parent->text(1);
-    auto data = parent->data(1, Qt::UserRole + 1).value<NodeData>();
-
-    auto node = mDoc.createElement("Param");
-    node.setAttribute("name", name);
-    node.setAttribute("id", data._id);
-    node.setAttribute("valueType", data._valueType);
-    node.setAttribute("value", value);
-    node.setAttribute("valueRange", data._valueRange);
-    node.setAttribute("checkable", data._checkable);
-    node.setAttribute("checked",
-                       QString::number(parent->checkState(0) != Qt::Unchecked)
-                           .toStdString()
-                           .c_str());
-    node.setAttribute("enable",
-                       QString::number(data._enable).toStdString().c_str());
-
-    element.appendChild(node);
-
-    for (int i = 0; i < countChild; i++) {
-        QTreeWidgetItem *childItem = parent->child(i);
-        SaveXmlConfig(node, childItem);
     }
 }
 

@@ -4,13 +4,16 @@
 #include <QTreeWidget>
 #include <QVariant>
 #include <QtUiPlugin/QDesignerExportWidget>
-#include <QDomDocument>
 
+class QDomDocument;
+class QXmlTreeWidget2Private;
 class QDESIGNER_WIDGET_EXPORT QXmlTreeWidget2 : public QTreeWidget
 {
     Q_OBJECT
     Q_PROPERTY(bool Editable READ editable WRITE setEditable NOTIFY editableChanged FINAL)
     Q_PROPERTY(bool nodeEditable READ nodeEditable WRITE setNodeEditable NOTIFY nodeEditableChanged FINAL)
+
+    friend class QXmlTreeWidget2Private;
 
 public:
     /// <summary>
@@ -94,7 +97,6 @@ private slots:
     /// <param name = "item">树item</param>
     /// <param name = "col">列</returns>
     void SlotUpdateChildItemStatus(QTreeWidgetItem *item);
-
     void SlotOnRightClickedMenu(const QPoint &pos);
     void SlotOnOpenAction();
     void SlotOnCopyAction();
@@ -102,21 +104,8 @@ private slots:
     void SlotOnDelAction();
 
 private:
-    /// <summary>
-    /// 私有重载，迭代初始化树
-    /// </summary>
-    /// <param name="element">xml元素</param>
-    /// <param name="parent">父节点</param>
-    /// <param name="level">层级</param>
-    void InitXml(const QDomElement& element, QTreeWidgetItem* parent);
-    /// <summary>
-    /// 私有重载，迭代保存树
-    /// </summary>
-    /// <param name="element">xml元素</param>
-    /// <param name="parent">父节点</param>
-    void SaveXmlConfig(QDomElement& element, QTreeWidgetItem* parent);
-
-    QDomDocument mDoc;
+    QXmlTreeWidget2Private* mpPrivate;
+    QDomDocument* mDoc;
     QMap<QString, QTreeWidgetItem*> mNodeMap;//id，节点
     QTreeWidgetItem* mDoubleClickedItem{ nullptr };
     QTreeWidgetItem* mRightClickedItem{ nullptr };
