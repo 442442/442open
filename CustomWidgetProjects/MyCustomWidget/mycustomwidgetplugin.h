@@ -1,9 +1,9 @@
 ﻿#pragma once
-#if QT_VERSION >= 0x050600
-#include <QtUiPlugin/QDesignerCustomWidgetInterface>
-#else
-#include <QDesignerCustomWidgetInterface>
-#endif
+#include <QtDesigner/QDesignerCustomWidgetInterface>
+#include <QtDesigner/QDesignerFormEditorInterface>
+#include <QtDesigner/QDesignerLayoutDecorationExtension>
+#include <QtDesigner/QDesignerFormWindowInterface>
+#include <QtDesigner/QDesignerFormWindowManagerInterface>
 
 class MyCustomWidgetPlugin : public QDesignerCustomWidgetInterface
 {
@@ -147,4 +147,32 @@ class QCodeEditPlugin : public QObject, public MyCustomWidgetPlugin
 public:
     QCodeEditPlugin(QObject *parent = nullptr);
     virtual QWidget *createWidget(QWidget *parent) override;
+};
+
+class QIndicatorLightPlugin : public QObject, public MyCustomWidgetPlugin
+{
+    Q_OBJECT
+    Q_INTERFACES(QDesignerCustomWidgetInterface)
+public:
+    QIndicatorLightPlugin(QObject *parent = nullptr);
+    virtual QWidget *createWidget(QWidget *parent) override;
+};
+
+class QFlowLayoutPlugin : public QObject, public MyCustomWidgetPlugin
+{
+    Q_OBJECT
+    Q_INTERFACES(QDesignerCustomWidgetInterface)
+public:
+    QFlowLayoutPlugin(QObject *parent = nullptr);
+
+    virtual bool isContainer() const override { return true; };
+    virtual bool isInitialized() const override { return mInitialized; };
+
+    virtual QWidget *createWidget(QWidget *parent) override;
+
+    virtual void initialize(QDesignerFormEditorInterface *core) override;
+
+private:
+    bool mInitialized{false};
+    QDesignerFormEditorInterface *mCore{nullptr};
 };

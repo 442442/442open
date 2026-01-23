@@ -9,6 +9,7 @@ MyCustomUnit::MyCustomUnit(QObject *parent)
     m_widgets.append(new QPathEditPlugin(this));
     m_widgets.append(new QFileEditPlugin(this));
     m_widgets.append(new QCodeEditPlugin(this));
+    m_widgets.append(new QIndicatorLightPlugin(this));
 #ifdef BUILD_WITH_HALCON
     m_widgets.append(new QHalconDisplayPlugin(this));
     m_widgets.append(new QHalconDisplayMiniPlugin(this));
@@ -19,6 +20,7 @@ MyCustomUnit::MyCustomUnit(QObject *parent)
     m_widgets.append(new QZoomGraphicViewPlugin(this));
     m_widgets.append(new QGraphicViewMiniHudPlugin(this));
     m_widgets.append(new QCpMonitorPlugin(this));
+    m_widgets.append(new QFlowLayoutPlugin(this));
 }
 
 QList<QDesignerCustomWidgetInterface*> MyCustomUnit::customWidgets() const

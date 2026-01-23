@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "mycustomwidgetplugin.h"
-#include <QtPlugin>
 #include "Q442CustomWidget.h"
 #include "Q442Halconwidget.h"
 
@@ -283,7 +282,7 @@ QWidget *QCpMonitorPlugin::createWidget(QWidget *parent)
     return new QCpMonitor(parent);
 }
 
-QCodeEditPlugin::QCodeEditPlugin(QObject *parent)
+QCodeEditPlugin::QCodeEditPlugin(QObject *parent) : QObject(parent)
 {
     m_name = QLatin1String("QCodeEdit");
     m_include=QLatin1String("CustomEdits/qcodeedit.h");
@@ -304,4 +303,62 @@ QCodeEditPlugin::QCodeEditPlugin(QObject *parent)
 QWidget *QCodeEditPlugin::createWidget(QWidget *parent)
 {
     return new QCodeEdit(parent);
+}
+
+QIndicatorLightPlugin::QIndicatorLightPlugin(QObject *parent) : QObject(parent)
+{
+    m_name = QLatin1String("QIndicatorLight");
+    m_include=QLatin1String("CustomEdits/qindicatorlight.h");
+    m_toolTip=QString(u8"状态指示灯");
+    m_domXml="<widget class=\"QIndicatorLight\" name=\"qIndicatorLight\">\n"
+               " <property name=\"geometry\">\n"
+               "  <rect>\n"
+               "   <x>0</x>\n"
+               "   <y>0</y>\n"
+               "   <width>50</width>\n"
+               "   <height>20</height>\n"
+               "  </rect>\n"
+               " </property>\n"
+               "</widget>\n";
+    m_icon = QIcon("://icon/widget.png");
+}
+
+QWidget *QIndicatorLightPlugin::createWidget(QWidget *parent)
+{
+    return new QIndicatorLight(parent);
+}
+
+QFlowLayoutPlugin::QFlowLayoutPlugin(QObject *parent) : QObject(parent)
+{
+    m_name = QLatin1String("QFlowLayoutWidget");
+    m_include=QLatin1String("CustomLayouts/qflowlayout.h");
+    m_toolTip=QString(u8"流式布局");
+    m_domXml=R"(
+  <widget class="QFlowLayoutWidget" name="qFlowLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>100</width>
+     <height>100</height>
+    </rect>
+   </property>
+  </widget>
+    )";
+    m_icon = QIcon("://icon/layout.png");
+}
+
+QWidget *QFlowLayoutPlugin::createWidget(QWidget *parent)
+{
+    QFlowLayoutWidget *widget = new QFlowLayoutWidget(parent);
+    return widget;
+}
+
+void QFlowLayoutPlugin::initialize(QDesignerFormEditorInterface *core)
+{
+    if(mInitialized) return;
+
+    mCore = core;
+    mInitialized = true;
+
 }

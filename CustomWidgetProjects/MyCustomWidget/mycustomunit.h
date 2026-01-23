@@ -1,4 +1,4 @@
-#ifndef MYCUSTOMUNIT_H
+﻿#ifndef MYCUSTOMUNIT_H
 #define MYCUSTOMUNIT_H
 #pragma once
 #include <QtDesigner>
@@ -8,9 +8,7 @@ class MyCustomUnit : public QObject, public QDesignerCustomWidgetCollectionInter
 {
     Q_OBJECT
     Q_INTERFACES(QDesignerCustomWidgetCollectionInterface)
-#if QT_VERSION >= 0x050000
     Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QDesignerCustomWidgetCollectionInterface")
-#endif // QT_VERSION >= 0x050000
 
 public:
     explicit MyCustomUnit(QObject *parent = 0);

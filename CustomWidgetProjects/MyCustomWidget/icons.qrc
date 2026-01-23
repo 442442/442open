@@ -9,5 +9,6 @@
         <file>icon/widget.png</file>
         <file>icon/xmltreeicon.png</file>
         <file>icon/textediticon.png</file>
+        <file>icon/layout.png</file>
     </qresource>
 </RCC>

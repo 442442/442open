@@ -161,6 +161,9 @@ file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${OUTPUT_PATH}/../include)
 file(GLOB MY_PUBLIC_HEADERS CustomEdits/*.h)
 file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${OUTPUT_PATH}/../include/CustomEdits)
 
+file(GLOB MY_PUBLIC_HEADERS CustomLayouts/*.h)
+file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${OUTPUT_PATH}/../include/CustomLayouts)
+
 file(GLOB MY_PUBLIC_HEADERS QCpMonitor/qcpmonitor.h)
 file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${OUTPUT_PATH}/../include/QCpMonitor)
 

@@ -9,3 +9,5 @@
 #include "QZoomGraphicView/qpixellistener.h"
 #include "CustomEdits/qpathedit.h"
 #include "CustomEdits/qcodeedit.h"
+#include "CustomEdits/qindicatorlight.h"
+#include "CustomLayouts/qflowlayout.h"
