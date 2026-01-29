@@ -69,6 +69,9 @@ public:
     QIndicatorLight::IndicatorStatus status() const;
     void setStatus(QIndicatorLight::IndicatorStatus newStatus);
 
+    QSize sizeHint() const override;
+    QSize minimumSizeHint() const override;
+
 public slots:
     void setNormalStatus();
     void setAlarmStatus();

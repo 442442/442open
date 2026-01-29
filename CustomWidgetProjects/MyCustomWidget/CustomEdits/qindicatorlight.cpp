@@ -182,6 +182,33 @@ void QIndicatorLight::setStatus(QIndicatorLight::IndicatorStatus newStatus)
     repaint();
 }
 
+QSize QIndicatorLight::sizeHint() const
+{
+    const QMargins margins = contentsMargins();
+    const QFontMetrics fm(font());
+    const QRect minTextRect = fm.boundingRect(u8"璘");
+
+    int n = qMax(mNormalText.size(),mAlarmText.size());
+    n = qMax(n,mAbnormalText.size());
+
+    int w = margins.left() + margins.right() + minTextRect.width() * (n + 2) + 4;
+    int h = margins.top() + margins.bottom() + minTextRect.height() + 4;
+
+    return QSize(w, h);
+}
+
+QSize QIndicatorLight::minimumSizeHint() const
+{
+    const QMargins margins = contentsMargins();
+    const QFontMetrics fm(font());
+    const QRect minTextRect = fm.boundingRect(u8"璘");
+
+    int minW = margins.left() + margins.right() + minTextRect.width() * 3 + 4;
+    int minH = margins.top() + margins.bottom() + minTextRect.height() + 4;
+
+    return QSize(qMax(minW,20), qMax(minH,20));
+}
+
 void QIndicatorLight::setStatusWithText(QIndicatorLight::IndicatorStatus newStatus, const QString &text)
 {
     if(mStatus != newStatus)
