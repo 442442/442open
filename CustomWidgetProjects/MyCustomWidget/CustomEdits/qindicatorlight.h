@@ -20,13 +20,16 @@ class QDESIGNER_WIDGET_EXPORT QIndicatorLight : public QLabel
     Q_PROPERTY(QString alarmText READ alarmText WRITE setAlarmText NOTIFY alarmTextChanged FINAL)
     Q_PROPERTY(QString abnormalText READ abnormalText WRITE setAbnormalText NOTIFY abnormalTextChanged FINAL)
 
+    Q_PROPERTY(QIndicatorLight::IndicatorStatus status READ status WRITE setStatus NOTIFY statusChanged FINAL)
+
 public:
     enum IndicatorStatus
     {
         Normal,
         Alarm,
-        AbNormal
+        Abnormal
     };
+    Q_ENUM(IndicatorStatus)
 
     QIndicatorLight(QWidget* parent = nullptr);
 
@@ -63,9 +66,14 @@ public:
     QString abnormalText() const;
     void setAbnormalText(const QString &newAbnormalText);
 
-    IndicatorStatus status() const;
-public slots:
+    QIndicatorLight::IndicatorStatus status() const;
     void setStatus(QIndicatorLight::IndicatorStatus newStatus);
+
+public slots:
+    void setNormalStatus();
+    void setAlarmStatus();
+    void setAbnormalStatus();
+
     void setStatusWithText(QIndicatorLight::IndicatorStatus newStatus, const QString& text);
 
 public:
@@ -84,7 +92,7 @@ signals:
     void alarmTextChanged();
     void abnormalTextChanged();
 
-    void statusChanged(QIndicatorLight::IndicatorStatus);
+    void statusChanged();
 
 private:
     QColor mNormalColor{Qt::green};
@@ -99,8 +107,6 @@ private:
     QString mAlarmText{ u8"警告" };
     QString mAbnormalText{ u8"异常" };
 
-    QIndicatorLight::IndicatorStatus mStatus;
-
+    QIndicatorLight::IndicatorStatus mStatus{IndicatorStatus::Normal};
 };
-
 #endif // QINDICATORLIGHT_H

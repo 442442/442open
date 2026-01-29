@@ -29,6 +29,8 @@ MainWindow::MainWindow(QWidget *parent)
     // xml树demo
     {
         QXmlTreeWidget2 *xmltree = new QXmlTreeWidget2;
+        xmltree->setEditable(true);
+        xmltree->setNodeEditable(true);
         xmltree->InitFromXmlConfig(
            "D:\\Git\\QtPluginSystem\\x64\\Release\\config\\SystemConfig.xml");
         // xmltree->InitFromXmlConfig("D:\\Git\\ceramic_edge_detection\\x64\\Release\\config\\ResultTable.xml");

@@ -8,19 +8,22 @@ CustomWidgetProjects为自定义控件库项目
 
 ### 控件库包含
 
-电脑性能监控
-拖拽树
-xml树（2种）
+代码编辑器
+指示灯
 路径选择框
 文件选择框
 参数编辑框
+流式布局
+电脑性能监控
+拖拽树
+qgraphicsview缩略窗
+xml树
+qgraphicsview显示(可放大)
+qgraphics图元(可放大，有箭头，方框，文字，图片)
 halcon显示
 halcon仅显示
 halcon缩略窗(双击打开放开窗口)
-qgraphicsview显示(可放大)
-qgraphicsview缩略窗
-qgraphics图元(可放大，有箭头，方框，文字，图片)
-vtk点云显示窗口（添加点选，z上色）
+vtk点云显示窗口（添加点选，z上色，开发中）
 
 
 #### 安装教程
@@ -43,4 +46,4 @@ vtk点云显示窗口（添加点选，z上色）
 
 4.	halcon窗口region点击信息弹出异常
 
-1.  property切换stylesheet失败
+1.  QXmlTree 顶层节点编辑使能属性，需要操作2次才能正确显示。

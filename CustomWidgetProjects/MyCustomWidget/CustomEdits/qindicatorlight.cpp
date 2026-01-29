@@ -153,35 +153,57 @@ void QIndicatorLight::setAbnormalText(const QString &newAbnormalText)
     emit abnormalTextChanged();
 }
 
+void QIndicatorLight::setNormalStatus()
+{
+    setStatus(IndicatorStatus::Normal);
+}
+
+void QIndicatorLight::setAlarmStatus()
+{
+    setStatus(IndicatorStatus::Alarm);
+}
+
+void QIndicatorLight::setAbnormalStatus()
+{
+    setStatus(IndicatorStatus::Abnormal);
+}
+
 QIndicatorLight::IndicatorStatus QIndicatorLight::status() const
 {
     return mStatus;
 }
 
-void QIndicatorLight::setStatus(IndicatorStatus newStatus)
+void QIndicatorLight::setStatus(QIndicatorLight::IndicatorStatus newStatus)
 {
+    if(mStatus == newStatus)
+        return;
     mStatus = newStatus;
-    emit statusChanged(mStatus);
+    emit statusChanged();
+    repaint();
 }
 
-void QIndicatorLight::setStatusWithText(IndicatorStatus newStatus, const QString &text)
+void QIndicatorLight::setStatusWithText(QIndicatorLight::IndicatorStatus newStatus, const QString &text)
 {
-    mStatus = newStatus;
-    emit statusChanged(mStatus);
+    if(mStatus != newStatus)
+    {
+        mStatus = newStatus;
+        emit statusChanged();
+    }
 
     switch (mStatus) {
-    case Normal:
+    case IndicatorStatus::Normal:
         mNormalText = text;
         break;
-    case Alarm:
+    case IndicatorStatus::Alarm:
         mAlarmText = text;
         break;
-    case AbNormal:
+    case IndicatorStatus::Abnormal:
         mAbnormalText = text;
         break;
     default:
         break;
     }
+    repaint();
 }
 
 void QIndicatorLight::paintEvent(QPaintEvent *event)
@@ -194,17 +216,17 @@ void QIndicatorLight::paintEvent(QPaintEvent *event)
     QColor bgColor, textColor;
     QString text;
     switch (mStatus) {
-    case Normal:
+    case IndicatorStatus::Normal:
         bgColor = mNormalColor;
         textColor = mNormalTextColor;
         text = mNormalText;
         break;
-    case Alarm:
+    case IndicatorStatus::Alarm:
         bgColor = mAlarmColor;
         textColor = mAlarmTextColor;
         text = mAlarmText;
         break;
-    case AbNormal:
+    case IndicatorStatus::Abnormal:
         bgColor = mAbnormalColor;
         textColor = mAbnormalTextColor;
         text = mAbnormalText;

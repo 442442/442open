@@ -28,6 +28,8 @@ public:
 
     NodeAttributesDlg::NodeData getData();
 
+    void setDate(const NodeAttributesDlg::NodeData& data);
+
 private:
     Ui::NodeAttributesDlg *ui;
 };

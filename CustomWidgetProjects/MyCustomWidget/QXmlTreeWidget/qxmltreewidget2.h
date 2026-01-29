@@ -7,6 +7,16 @@
 
 class QDomDocument;
 class QXmlTreeWidget2Private;
+/// <summary>
+/// Xml树控件类
+///
+/// 备注：
+/// NodeData存储在节点1列UserRole+1处
+///
+/// 已知bug：
+/// 修改topLevelItem节点enable属性时，需要连续修改2次，才能正确生效
+/// 怀疑是Qt的bug
+/// </summary>
 class QDESIGNER_WIDGET_EXPORT QXmlTreeWidget2 : public QTreeWidget
 {
     Q_OBJECT
@@ -85,9 +95,10 @@ signals:
     /// <summary>
     /// 可编辑改变
     /// </summary>
-    /// <param name = "e">异常信息</param>
     void editableChanged();
-
+    /// <summary>
+    /// 节点数据可编辑改变
+    /// </summary>
     void nodeEditableChanged();
 
 private slots:
@@ -101,6 +112,7 @@ private slots:
     void SlotOnOpenAction();
     void SlotOnCopyAction();
     void SlotOnAddAction();
+    void SlotOnEditAction();
     void SlotOnDelAction();
 
 private:
@@ -113,6 +125,7 @@ private:
     QAction *mpOpenAction{ nullptr };
     QAction *mpCopyAction{ nullptr };
     QAction *mpAddAction{ nullptr };
+    QAction *mpEditAction{ nullptr };
     QAction *mpDelAction{ nullptr };
     bool mEditable{ true };
     bool mNodeEditable{ false };

@@ -4,6 +4,7 @@
 #include <QComboBox>
 #include <QLineEdit>
 #include <QSpinBox>
+#include <QDateTimeEdit>
 
 #define CREATE_EDITOR(ClassName) ClassName *editor = new ClassName(parent);\
 connect(editor, &ClassName::editingFinished, this, &XmlTreeDelegate::commitAndCloseEditor);
@@ -51,6 +52,16 @@ QWidget *XmlTreeDelegate::createEditor(QWidget *parent,
         } else if (nodeData._valueType == "file") {
             CREATE_EDITOR(QFileEdit);
             return editor;
+        } else if (nodeData._valueType == "datetime") {
+            CREATE_EDITOR(QDateTimeEdit);
+            editor->setDisplayFormat("yyyy-MM-dd hh:mm:ss");
+            auto range = nodeData._valueRange.split(",");
+            if (range.size() != 2)
+                return editor;
+            editor->setDateTimeRange(
+                QDateTime::fromString(range.at(0), editor->displayFormat()),
+                QDateTime::fromString(range.at(1), editor->displayFormat()));
+            return editor;
         }
     }
     //return QStyledItemDelegate::createEditor(parent, option, index);
@@ -82,6 +93,10 @@ void XmlTreeDelegate::setEditorData(QWidget *editor,
         } else if (nodeData._valueType == "file") {
             QFileEdit *peditor = qobject_cast<QFileEdit *>(editor);
             peditor->setText(index.data().value<QString>());
+        } else if (nodeData._valueType == "datetime"){
+            QDateTimeEdit* peditor = qobject_cast<QDateTimeEdit*>(editor);
+            peditor->setDateTime(QDateTime::fromString(
+                index.data().value<QString>(), peditor->displayFormat()));
         }
     } else {
         QStyledItemDelegate::setEditorData(editor, index);
@@ -112,6 +127,9 @@ void XmlTreeDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
             model->setData(index, peditor->text(),Qt::EditRole);
         } else if (nodeData._valueType == "file") {
             QFileEdit *peditor = qobject_cast<QFileEdit *>(editor);
+            model->setData(index, peditor->text(),Qt::EditRole);
+        } else if (nodeData._valueType == "datetime"){
+            QDateTimeEdit *peditor = qobject_cast<QDateTimeEdit *>(editor);
             model->setData(index, peditor->text(),Qt::EditRole);
         }
         model->blockSignals(false);

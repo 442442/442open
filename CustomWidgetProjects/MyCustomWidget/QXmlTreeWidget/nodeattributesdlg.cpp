@@ -19,3 +19,15 @@ NodeAttributesDlg::NodeData NodeAttributesDlg::getData() {
                     ui->valueRangeEdit->text(), ui->checkableEdit->text(),
                     ui->checkedCheck->isChecked(),    ui->enableCheck->isChecked()};
 }
+
+void NodeAttributesDlg::setDate(const NodeData &data)
+{
+    ui->nameEdit->setText(data._name);
+    ui->idEdit->setText(data._id);
+    ui->valueEdit->setText(data._value);
+    ui->valueTypeEdit->setText(data._valueType);
+    ui->valueRangeEdit->setText(data._valueRange);
+    ui->checkableEdit->setText(data._checkable);
+    ui->checkedCheck->setCheckState(data._checked ? Qt::Checked : Qt::Unchecked);
+    ui->enableCheck->setCheckState(data._enable ? Qt::Checked : Qt::Unchecked);
+}

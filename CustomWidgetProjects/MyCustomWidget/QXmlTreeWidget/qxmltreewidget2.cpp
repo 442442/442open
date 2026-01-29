@@ -24,7 +24,9 @@
 const QString XML_COMMENT2 =
     u8"name显示文字;id唯一标识;valueType参数类型(int/float/double/string/enum/"
                              u8"path/"
-                             u8"file);valueRange值域(逗号分割);checkable可勾选;checked勾选;enable使能;";
+                             u8"file/"
+                             u8"datetime);valueRange值域(逗号分割);checkable可勾选;checked勾选;"
+                             u8"enable使能;";
 
 class QXmlTreeWidget2Private
 {
@@ -133,6 +135,7 @@ QXmlTreeWidget2::QXmlTreeWidget2(QWidget *parent)
     mpOpenAction(new QAction(u8"打开路径", this)),
     mpCopyAction(new QAction(u8"复制文本", this)),
     mpAddAction(new QAction(u8"添加子节点", this)),
+    mpEditAction(new QAction(u8"修改节点", this)),
     mpDelAction(new QAction(u8"删除节点", this))
 {
     this->setAlternatingRowColors(true);
@@ -157,6 +160,8 @@ QXmlTreeWidget2::QXmlTreeWidget2(QWidget *parent)
             &QXmlTreeWidget2::SlotOnOpenAction);
     connect(mpAddAction, &QAction::triggered, this,
             &QXmlTreeWidget2::SlotOnAddAction);
+    connect(mpEditAction, &QAction::triggered, this,
+            &QXmlTreeWidget2::SlotOnEditAction);
     connect(mpDelAction, &QAction::triggered, this,
             &QXmlTreeWidget2::SlotOnDelAction);
 }
@@ -168,6 +173,7 @@ QXmlTreeWidget2::~QXmlTreeWidget2()
 }
 
 bool QXmlTreeWidget2::InitFromXmlConfig(const QString& path) {
+    this->ClearTree();
     QFile file(path);
     if (!file.exists())
     {
@@ -201,6 +207,7 @@ bool QXmlTreeWidget2::InitFromXmlConfig(const QString& path) {
 }
 
 bool QXmlTreeWidget2::InitFromXmlStr(QAnyStringView xml) {
+    this->ClearTree();
     mDoc->clear();
     if (auto res = mDoc->setContent(xml); !res)
     {
@@ -308,15 +315,19 @@ void QXmlTreeWidget2::setEditable(bool newEditable) {
 void QXmlTreeWidget2::SlotUpdateChildItemStatus(QTreeWidgetItem *item) {
     int nCount = item->childCount();
     for (int nIndex = 0; nIndex < nCount; ++nIndex) {
+        this->blockSignals(true);
         auto child = item->child(nIndex);
         if (child->flags() & Qt::ItemFlag::ItemIsUserCheckable)
             child->setCheckState(0, item->checkState(0));
         child->setDisabled(
-            (item->checkState(0) == Qt::CheckState::Unchecked) ||
-            !child->data(1, Qt::UserRole + 1).value<NodeData>()._enable);
+            (item->checkState(0) == Qt::CheckState::Unchecked &&
+             item->flags() & Qt::ItemFlag::ItemIsUserCheckable) ||
+            !child->data(1, Qt::UserRole + 1).value<NodeData>()._enable ||
+            !item->data(1, Qt::UserRole + 1).value<NodeData>()._enable);
         if (child->childCount() > 0) {
             SlotUpdateChildItemStatus(child);
         }
+        this->blockSignals(false);
     }
 }
 
@@ -334,7 +345,15 @@ void QXmlTreeWidget2::SlotOnRightClickedMenu(const QPoint &pos) {
         if(mNodeEditable)
         {
             mpMenu->addAction(mpAddAction);
+            mpMenu->addAction(mpEditAction);
             mpMenu->addAction(mpDelAction);
+        }
+    }
+    else
+    {
+        if(mNodeEditable)
+        {
+            mpMenu->addAction(mpAddAction);
         }
     }
     mpMenu->exec(QCursor::pos());
@@ -357,8 +376,7 @@ void QXmlTreeWidget2::SlotOnCopyAction() {
 }
 
 void QXmlTreeWidget2::SlotOnAddAction() {
-    if (mRightClickedItem == nullptr)
-        return;
+    bool isToplevel = mRightClickedItem == nullptr;
     if (NodeAttributesDlg dlg; dlg.exec() == QDialog::Accepted) {
         auto nodeData = dlg.getData();
         QTreeWidgetItem *item = new QTreeWidgetItem();
@@ -371,22 +389,100 @@ void QXmlTreeWidget2::SlotOnAddAction() {
         item->setData(1, Qt::UserRole + 1, QVariant::fromValue(data));
         mNodeMap[nodeData._id] = item;
 
-        mRightClickedItem->addChild(item);
-        if (STRING_IS_TRUE(nodeData._checkable)) {
-            if (nodeData._checked && ((mRightClickedItem->flags() & Qt::ItemFlag::ItemIsUserCheckable)
-                ? (mRightClickedItem->checkState(0) == Qt::CheckState::Checked) : true)) {
-                item->setCheckState(0, Qt::CheckState::Checked);
-            } else {
-                item->setCheckState(0, Qt::CheckState::Unchecked);
+        if(isToplevel)
+        {
+            this->addTopLevelItem(item);
+            if (STRING_IS_TRUE(nodeData._checkable)) {
+                item->setCheckState(0, nodeData._checked ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
             }
-        } else {
-            item->setFlags(item->flags() & ~Qt::ItemFlag::ItemIsUserCheckable);
+            else{
+                item->setFlags(item->flags() & ~Qt::ItemFlag::ItemIsUserCheckable);
+            }
+            if (!nodeData._enable) {
+                item->setDisabled(true);
+            }
         }
-        if (!nodeData._enable || mRightClickedItem->isDisabled() ||
-            (mRightClickedItem->checkState(0) == Qt::Unchecked && (mRightClickedItem->flags() & Qt::ItemIsUserCheckable))) {
-            item->setDisabled(true);
+        else
+        {
+            mRightClickedItem->addChild(item);
+            if (STRING_IS_TRUE(nodeData._checkable)) {
+                if (nodeData._checked && ((mRightClickedItem->flags() & Qt::ItemFlag::ItemIsUserCheckable)
+                                              ? (mRightClickedItem->checkState(0) == Qt::CheckState::Checked) : true)) {
+                    item->setCheckState(0, Qt::CheckState::Checked);
+                } else {
+                    item->setCheckState(0, Qt::CheckState::Unchecked);
+                }
+            } else {
+                item->setFlags(item->flags() & ~Qt::ItemFlag::ItemIsUserCheckable);
+            }
+            if (!nodeData._enable || mRightClickedItem->isDisabled() ||
+                (mRightClickedItem->checkState(0) == Qt::Unchecked && (mRightClickedItem->flags() & Qt::ItemIsUserCheckable))) {
+                item->setDisabled(true);
+            }
+        }
+
+    }
+}
+
+void QXmlTreeWidget2::SlotOnEditAction()
+{
+    if (mRightClickedItem == nullptr)
+        return;
+
+
+    NodeAttributesDlg dlg;
+    auto nodeData = mRightClickedItem->data(1,Qt::UserRole+1).value<NodeData>();
+    NodeAttributesDlg::NodeData attributes
+    {
+        mRightClickedItem->text(0), nodeData._id, mRightClickedItem->text(1),
+            nodeData._valueType, nodeData._valueRange, nodeData._checkable,
+            mRightClickedItem->checkState(0) == Qt::Checked, nodeData._enable
+    };
+    dlg.setDate(attributes);
+    this->blockSignals(true);
+    if (dlg.exec() == QDialog::Accepted) {
+        auto attributesAlter = dlg.getData();
+        mRightClickedItem->setFlags(mRightClickedItem->flags() | Qt::ItemFlag::ItemIsEditable);
+        mRightClickedItem->setText(0, attributesAlter._name);
+        mRightClickedItem->setText(1, attributesAlter._value);
+        NodeData nodeDataAlter(attributesAlter._id, attributesAlter._valueType, attributesAlter._valueRange,
+                      attributesAlter._checkable, attributesAlter._enable);
+        mRightClickedItem->setData(1, Qt::UserRole + 1, QVariant::fromValue(nodeDataAlter));
+        mNodeMap.remove(nodeData._id);
+        mNodeMap[nodeDataAlter._id] = mRightClickedItem;
+
+        if(auto parentItem = mRightClickedItem->parent())
+        {
+            if (STRING_IS_TRUE(attributesAlter._checkable)) {
+                mRightClickedItem->setFlags(mRightClickedItem->flags() | Qt::ItemFlag::ItemIsUserCheckable);
+                if (attributesAlter._checked && ((parentItem->flags() & Qt::ItemFlag::ItemIsUserCheckable)
+                                              ? (parentItem->checkState(0) == Qt::CheckState::Checked) : true)) {
+                    mRightClickedItem->setCheckState(0, Qt::CheckState::Checked);
+                } else {
+                    mRightClickedItem->setCheckState(0, Qt::CheckState::Unchecked);
+                }
+            } else {
+                mRightClickedItem->setFlags(mRightClickedItem->flags() & ~Qt::ItemFlag::ItemIsUserCheckable);
+            }
+            mRightClickedItem->setDisabled(
+                !attributesAlter._enable || parentItem->isDisabled() ||
+                (parentItem->checkState(0) == Qt::Unchecked &&
+                                                                         (parentItem->flags() & Qt::ItemIsUserCheckable)));
+        }
+        else
+        {
+            if (STRING_IS_TRUE(attributesAlter._checkable)) {
+                mRightClickedItem->setFlags(mRightClickedItem->flags() | Qt::ItemFlag::ItemIsUserCheckable);
+                mRightClickedItem->setCheckState(0, attributesAlter._checked ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
+            }
+            else{
+                mRightClickedItem->setFlags(mRightClickedItem->flags() & ~Qt::ItemFlag::ItemIsUserCheckable);
+            }
+            mRightClickedItem->setDisabled(!nodeData._enable);
         }
     }
+    this->blockSignals(false);
+    SlotUpdateChildItemStatus(mRightClickedItem);
 }
 
 void QXmlTreeWidget2::SlotOnDelAction() {
