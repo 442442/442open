@@ -236,6 +236,7 @@ void QHalconDisplay::ImgToChannel(HObject show_img, HObject& show_channeled) {
 void QHalconDisplay::PaintOnHWnd(bool refresh) {
     try
     {
+        SetSystem("flush_graphic", "false");
         if (refresh) {
             SetPart(m_HalconID, 0, 0, nHwndHeight[0].I() - 1, mHwndWidth[0].I() - 1);
             cur_zoom_rate = 1;
@@ -248,11 +249,6 @@ void QHalconDisplay::PaintOnHWnd(bool refresh) {
             }
         }
         ClearWindow(m_HalconID);
-        DispObj(show_img, m_HalconID);
-        SetColor(m_HalconID, "red");
-        DispObj(show_region, m_HalconID);
-        SetColor(m_HalconID, "blue");
-        DispObj(show_regionSelected, m_HalconID);
         for(auto& t: m_hTextTuple)
         {
             SetColor(m_HalconID, t.color);
@@ -264,6 +260,12 @@ void QHalconDisplay::PaintOnHWnd(bool refresh) {
             SetTposition(m_HalconID, t.row, t.col);
             WriteString(m_HalconID, t.text);
         }
+        DispObj(show_img, m_HalconID);
+        SetColor(m_HalconID, "red");
+        DispObj(show_region, m_HalconID);
+        SetColor(m_HalconID, "blue");
+        SetSystem("flush_graphic", "true");
+        DispObj(show_regionSelected, m_HalconID);
         SetColor(m_HalconID, "red");
     }
     catch (HException& e)
