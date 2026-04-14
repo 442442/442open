@@ -17,6 +17,8 @@ public:
 
     QGraphicImgItem(QGraphicsItem *parent = nullptr);
     QGraphicImgItem(const QPixmap &pixmap, QGraphicsItem *parent = nullptr);
+
+    ~QGraphicImgItem();
     /// <summary>
     /// 添加像素值监听
     /// </summary>
@@ -37,6 +39,7 @@ public:
 
 private:
     void mousePressEvent(QGraphicsSceneMouseEvent *ev) override;
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *ev) override;
     QPixelListener* mWatcher;
 };
 

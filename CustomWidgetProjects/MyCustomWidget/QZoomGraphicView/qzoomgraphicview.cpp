@@ -54,53 +54,69 @@ void QZoomGraphicView::Restore()
 
 void QZoomGraphicView::mousePressEvent(QMouseEvent* event)
 {
-	if (event->button() == Qt::LeftButton)
-	{
-		if (this->scene() == nullptr) return;
+    if(event->modifiers() == Qt::ControlModifier)
+    {
+        this->viewport()->setCursor(Qt::CrossCursor);
+    }
+    else
+    {
+        if (event->button() == Qt::LeftButton)
+        {
+            if (this->scene() == nullptr) return;
 #if QT_VERSION <= QT_VERSION_CHECK(6,0,0)
-		mMousePress = mapToScene(event->pos());
+            mMousePress = mapToScene(event->pos());
 #else
-		mMousePress = mapToScene(event->position().toPoint());
+            mMousePress = mapToScene(event->position().toPoint());
 #endif
-		//qDebug() << "mMousePress:" << mMousePress;
-		isMousePressed = true;
-		this->viewport()->setCursor(Qt::ClosedHandCursor);
-	}
-	else if (event->button() == Qt::RightButton)
-	{
-		Restore();
-	}
+            //qDebug() << "mMousePress:" << mMousePress;
+            isMousePressed = true;
+            this->viewport()->setCursor(Qt::ClosedHandCursor);
+        }
+        else if (event->button() == Qt::RightButton)
+        {
+            Restore();
+        }
+    }
 	QGraphicsView::mousePressEvent(event);
 }
 
 void QZoomGraphicView::mouseMoveEvent(QMouseEvent* event)
 {
-	if (isMousePressed)
-	{
-#if QT_VERSION <= QT_VERSION_CHECK(6,0,0)
-		QPointF curPos = mapToScene(event->pos());
+    if (event->modifiers() == Qt::ControlModifier) {
+        this->viewport()->setCursor(Qt::CrossCursor);
+    } else {
+        if (isMousePressed) {
+#if QT_VERSION <= QT_VERSION_CHECK(6, 0, 0)
+            QPointF curPos = mapToScene(event->pos());
 #else
-		QPointF curPos = mapToScene(event->position().toPoint());
+            QPointF curPos = mapToScene(event->position().toPoint());
 #endif
-		QPointF move = curPos - mMousePress;
-		//qDebug()<<"move"<<move;
-		QRectF curSceneRect = this->sceneRect();
-		QRectF newSceneRect(curSceneRect.x() - move.x(),
-			curSceneRect.y() - move.y(), curSceneRect.width(),
-			curSceneRect.height());
-		this->setSceneRect(newSceneRect);
-		this->fitInView(newSceneRect, Qt::KeepAspectRatio);
-	}
-	QGraphicsView::mouseMoveEvent(event);
+            QPointF move = curPos - mMousePress;
+            // qDebug()<<"move"<<move;
+            QRectF curSceneRect = this->sceneRect();
+            QRectF newSceneRect(curSceneRect.x() - move.x(),
+                                curSceneRect.y() - move.y(), curSceneRect.width(),
+                                curSceneRect.height());
+            this->setSceneRect(newSceneRect);
+            this->fitInView(newSceneRect, Qt::KeepAspectRatio);
+    }
+    }
+    QGraphicsView::mouseMoveEvent(event);
 }
 
 void QZoomGraphicView::mouseReleaseEvent(QMouseEvent* event)
 {
-	if (event->button() == Qt::LeftButton && isMousePressed)
-	{
-		isMousePressed = false;
-		this->viewport()->setCursor(Qt::OpenHandCursor);
-	}
+    if(event->modifiers() == Qt::ControlModifier)
+    {
+    }
+    else
+    {
+        if (event->button() == Qt::LeftButton && isMousePressed)
+        {
+            isMousePressed = false;
+            this->viewport()->setCursor(Qt::OpenHandCursor);
+        }
+    }
 	QGraphicsView::mouseReleaseEvent(event);
 }
 
@@ -140,3 +156,4 @@ void QZoomGraphicView::wheelEvent(QWheelEvent* event)
 	mCurrentRatio = mCurrentRatio * zoom;
 	Update();
 }
+

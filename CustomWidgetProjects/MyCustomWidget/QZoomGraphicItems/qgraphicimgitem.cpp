@@ -16,6 +16,15 @@ QGraphicImgItem::QGraphicImgItem(const QPixmap &pixmap, QGraphicsItem *parent)
     setFlags(QGraphicsItem::ItemIsFocusable);
 }
 
+QGraphicImgItem::~QGraphicImgItem()
+{
+    if (mWatcher)
+    {
+        delete mWatcher;
+        mWatcher = nullptr;
+    }
+}
+
 void QGraphicImgItem::AddPixelListener(QPixelListener *watcher)
 {
      mWatcher = watcher;
@@ -43,8 +52,18 @@ void QGraphicImgItem::mousePressEvent(QGraphicsSceneMouseEvent *ev)
 {
     if(mWatcher)
     {
-        auto point = ev->pos();
-        mWatcher->OnPixelInfo(
-            point, QColor(this->pixmap().toImage().pixel(point.toPoint())));
+        QPoint point = ev->pos().toPoint();
+        if(this->pixmap().rect().contains(point))
+            mWatcher->OnPixelInfo(point, QColor(this->pixmap().toImage().pixel(point)));
+    }
+}
+
+void QGraphicImgItem::mouseMoveEvent(QGraphicsSceneMouseEvent *ev)
+{
+    if(mWatcher && ev->modifiers() == Qt::ControlModifier)
+    {
+        QPoint point = ev->pos().toPoint();
+        if(this->pixmap().rect().contains(point))
+            mWatcher->OnPixelInfo(point, QColor(this->pixmap().toImage().pixel(point)));
     }
 }
