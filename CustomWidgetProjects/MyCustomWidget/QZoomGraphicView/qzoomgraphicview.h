@@ -13,6 +13,8 @@ class QDESIGNER_WIDGET_EXPORT QZoomGraphicView : public QGraphicsView
 public:
     QZoomGraphicView(QWidget *parent = nullptr);
     ~QZoomGraphicView();
+
+    enum CursorType{ Hand, Cross };
     /// <summary>
     /// 初始化场景大小
     /// </summary>
@@ -27,6 +29,11 @@ public:
     /// 显示还原
     /// </summary>
     void Restore();
+    /// <summary>
+    /// 设置鼠标类型
+    /// </summary>
+    /// <param name = "type"></param>
+    void SetCursorType(CursorType type);
 
 private:
     void mousePressEvent(QMouseEvent *event) override;
@@ -43,6 +50,7 @@ private:
     int mHeight{0};
 
     QPointF mMousePress;
+    CursorType mCursorType{ Hand };
 };
 
 #endif // QZOOMGRAPHICVIEW_H

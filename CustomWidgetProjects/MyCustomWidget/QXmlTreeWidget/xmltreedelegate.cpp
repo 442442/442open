@@ -34,6 +34,13 @@ QWidget *XmlTreeDelegate::createEditor(QWidget *parent,
             auto range = nodeData._valueRange.split(",");
             if (range.size() != 2)
                 return editor;
+            int decimal = 2;
+            if(auto decListTmp = range.at(0).split(".");decListTmp.size() == 2)
+            {
+                decimal = decListTmp.at(1).size();
+            }
+            editor->setDecimals(decimal);
+            editor->setStepType(QDoubleSpinBox::AdaptiveDecimalStepType);
             editor->setRange(range.at(0).toDouble(), range.at(1).toDouble());
             return editor;
         } else if (nodeData._valueType == "string") {
